@@ -4,285 +4,298 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#14112b">
-<title>Creator Compass – Từ thị trường đến video</title>
+<title>Prompt Kit – Làm content nhanh</title>
 <style>
-:root{--bg:#0f0d22;--card:#1b1838;--card2:#25214a;--txt:#ecebff;--mut:#9d98c9;--acc:#ffc94a;--ok:#4ade80;--bad:#f87171;--pri:#7c6cff}
+:root{--bg:#0f0d22;--card:#1b1838;--c2:#25214a;--t:#ecebff;--m:#9d98c9;--a:#ffc94a;--p:#7c6cff;--ok:#4ade80}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:84px;font-size:15px}
-header{position:sticky;top:0;z-index:5;background:linear-gradient(135deg,#231d52,#14112b);padding:12px 16px;border-bottom:1px solid #2e2960}
-header h1{font-size:17px}header small{color:var(--mut);font-size:12px}
-main{padding:12px}
+body{font-family:system-ui,-apple-system,Roboto,sans-serif;background:var(--bg);color:var(--t);font-size:15px;padding-bottom:80px}
+header{position:sticky;top:0;z-index:5;background:#1a1640;padding:10px 12px;border-bottom:1px solid #2e2960}
+header h1{font-size:16px}header small{color:var(--m);font-size:12px}
+main{padding:10px}
+.card{background:var(--card);border-radius:14px;padding:12px;margin-bottom:10px}
+.card h2{font-size:15px;color:var(--a);margin-bottom:6px}
+label{display:block;font-size:12px;color:var(--m);margin:7px 0 3px}
+input,select,textarea{width:100%;background:var(--c2);color:var(--t);border:1px solid #3a3470;border-radius:10px;padding:9px;font-size:15px;font-family:inherit}
+textarea{min-height:70px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+button{background:var(--p);color:#fff;border:0;border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600}
+.sec{background:var(--c2);border:1px solid #3a3470}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px}
+.chips button{flex:none;background:var(--c2);font-size:13px;padding:7px 12px;border-radius:20px;font-weight:500}
+.chips button.on{background:var(--a);color:#1a1300}
+.tp{background:var(--card);border-radius:12px;padding:11px;margin-bottom:8px}
+.tp .h{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.tp b{font-size:14px}.tp .d{color:var(--m);font-size:12.5px;margin-top:3px}
+.tp .acts{display:flex;gap:6px;margin-top:8px}
+.tp .acts button{flex:1;padding:8px;font-size:13px}
+.star{background:none;font-size:18px;padding:0 4px;color:var(--m)}.star.on{color:var(--a)}
+.out{background:#0b0a1a;border:1px dashed #3a3470;border-radius:10px;padding:10px;white-space:pre-wrap;font-size:13px;line-height:1.5;margin-top:8px;max-height:55vh;overflow:auto}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#17143a;border-top:1px solid #2e2960;z-index:9}
+nav button{flex:1;background:none;border-radius:0;padding:8px 2px 10px;font-size:11px;color:var(--m);font-weight:500}
+nav button i{display:block;font-style:normal;font-size:19px}nav button.on{color:var(--a)}
 .tab{display:none}.tab.on{display:block}
-.card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:12px}
-.card h2{font-size:15px;margin-bottom:8px;color:var(--acc)}
-.card h3{font-size:14px;margin:10px 0 6px}
-p.hint{color:var(--mut);font-size:13px;margin-bottom:8px;line-height:1.45}
-label{display:block;font-size:12px;color:var(--mut);margin:8px 0 4px}
-input,select,textarea{width:100%;background:var(--card2);color:var(--txt);border:1px solid #3a3470;border-radius:10px;padding:10px;font-size:15px;font-family:inherit}
-textarea{min-height:90px;resize:vertical}
-button{background:var(--pri);color:#fff;border:0;border-radius:10px;padding:11px 14px;font-size:14px;font-weight:600;margin:6px 6px 0 0}
-button.sec{background:var(--card2);border:1px solid #3a3470}
-button.warn{background:#7f1d1d}
-.row{display:flex;gap:8px}.row>*{flex:1}
-.out{background:#0b0a1a;border:1px dashed #3a3470;border-radius:10px;padding:12px;white-space:pre-wrap;font-size:13.5px;line-height:1.5;margin-top:10px;min-height:40px}
-nav{position:fixed;bottom:0;left:0;right:0;background:#17143a;display:flex;border-top:1px solid #2e2960;z-index:9}
-nav button{flex:1;background:none;margin:0;border-radius:0;padding:8px 2px 10px;font-size:10.5px;color:var(--mut);font-weight:500}
-nav button b{display:block;font-size:19px;margin-bottom:2px}
-nav button.on{color:var(--acc)}
-.chk{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #2a2655;font-size:14px}
-.chk input{width:20px;height:20px;flex:none;margin-top:1px}
-.pill{display:inline-block;background:var(--card2);border-radius:20px;padding:4px 10px;font-size:12px;margin:3px 3px 0 0}
-table{width:100%;border-collapse:collapse;font-size:13px}
-td,th{padding:6px 4px;border-bottom:1px solid #2a2655;text-align:left}
-th{color:var(--mut);font-weight:500}
-.score{font-weight:700;color:var(--acc)}
-.item{background:var(--card2);border-radius:10px;padding:10px;margin-top:8px;font-size:13.5px}
-.item .x{float:right;color:var(--bad);font-weight:700;padding:0 4px}
-.steps{display:flex;gap:4px;margin-bottom:10px}.steps span{flex:1;height:5px;border-radius:3px;background:#2e2960}.steps span.d{background:var(--acc)}
-a{color:var(--acc)}
-.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:var(--ok);color:#052;padding:8px 16px;border-radius:20px;font-weight:600;display:none;z-index:20}
+.toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);background:var(--ok);color:#042;padding:8px 16px;border-radius:20px;font-weight:700;display:none;z-index:20}
+.hint{color:var(--m);font-size:12.5px;line-height:1.45}
+.step{display:flex;gap:8px;align-items:center;background:var(--c2);border-radius:10px;padding:9px;margin-top:6px;font-size:13.5px}
+.step span{background:var(--a);color:#1a1300;border-radius:50%;width:22px;height:22px;display:grid;place-items:center;font-weight:700;flex:none;font-size:12px}
+.step button{margin-left:auto;padding:6px 10px;font-size:12px}
 </style>
 </head>
 <body>
-<header><h1>🧭 Creator Compass</h1><small>Thị trường → Ngách → Ý tưởng → Kịch bản → Hình ảnh → Đăng & Đo</small></header>
+<header><h1>⚡ Prompt Kit</h1><small>Điền 1 lần → copy prompt dán vào Copilot / ChatGPT / Flow</small></header>
 <main>
 
-<!-- 1. THỊ TRƯỜNG -->
-<section class="tab on" id="t1">
- <div class="card"><h2>① Xác định sân chơi</h2>
-  <p class="hint">Chọn nền tảng và thị trường trước — cùng 1 chủ đề nhưng khác thị trường thì RPM, đối thủ và gu khán giả khác hẳn.</p>
-  <div class="row"><div><label>Nền tảng</label><select id="plat"><option>TikTok</option><option>YouTube dài</option><option>YouTube Shorts</option><option>Facebook Reels</option><option>Instagram Reels</option></select></div>
-  <div><label>Thị trường</label><select id="mkt"><option>Việt Nam</option><option>Brazil</option><option>Mỹ / Anh</option><option>Indonesia</option><option>Philippines</option><option>Mexico / LatAm</option><option>Đức / châu Âu</option></select></div></div>
-  <label>Mục tiêu chính</label><select id="goal"><option>Kiếm tiền quảng cáo (RPM)</option><option>Affiliate / bán hàng</option><option>Xây thương hiệu cá nhân</option><option>Tăng follow nhanh</option></select>
-  <button onclick="marketAdvice()">Phân tích nhanh</button>
-  <div class="out" id="mktOut">Chọn thông số rồi bấm “Phân tích nhanh”.</div>
- </div>
- <div class="card"><h2>② Checklist nghiên cứu thị trường (30–60 phút)</h2>
-  <div id="resList"></div>
-  <h3>Công cụ miễn phí</h3>
-  <span class="pill"><a href="https://trends.google.com" target="_blank">Google Trends</a></span>
-  <span class="pill"><a href="https://ads.tiktok.com/business/creativecenter" target="_blank">TikTok Creative Center</a></span>
-  <span class="pill"><a href="https://www.youtube.com/results?search_query=" target="_blank">YouTube Search</a></span>
-  <span class="pill"><a href="https://www.reddit.com" target="_blank">Reddit</a></span>
-  <span class="pill"><a href="https://answerthepublic.com" target="_blank">AnswerThePublic</a></span>
- </div>
-</section>
-
-<!-- 2. NGÁCH -->
-<section class="tab" id="t2">
- <div class="card"><h2>③ Chấm điểm ngách</h2>
-  <p class="hint">Chấm 1–5 cho mỗi tiêu chí (Cạnh tranh: 5 = ít đối thủ). Điểm tổng có trọng số theo mục tiêu đã chọn ở tab Thị trường.</p>
-  <label>Chọn ngách gợi ý hoặc tự nhập</label>
-  <select id="nichePick" onchange="document.getElementById('nicheName').value=this.value"></select>
-  <input id="nicheName" placeholder="Tên ngách..." style="margin-top:6px">
-  <div id="critBox"></div>
-  <button onclick="addNiche()">+ Lưu vào bảng so sánh</button>
- </div>
- <div class="card"><h2>Bảng so sánh</h2><div id="nicheTable"><p class="hint">Chưa có ngách nào.</p></div></div>
-</section>
-
-<!-- 3. Ý TƯỞNG -->
-<section class="tab" id="t3">
- <div class="card"><h2>④ Máy tạo ý tưởng</h2>
-  <label>Ngách</label><input id="iNiche" placeholder="vd: tâm lý học hành vi">
-  <label>Khán giả mục tiêu</label><input id="iAud" placeholder="vd: người trẻ 20–30 tuổi đi làm">
-  <label>Nỗi đau / mong muốn chính</label><input id="iPain" placeholder="vd: hay trì hoãn, áp lực tiền bạc">
-  <label>Định dạng</label><select id="iFmt"><option>Video ngắn 30–60s</option><option>Carousel ảnh</option><option>Một slide trích dẫn</option><option>Video dài 8–15 phút</option></select>
-  <button onclick="genIdeas()">Tạo 10 ý tưởng</button>
-  <div id="ideaOut"></div>
- </div>
- <div class="card"><h2>Kho ý tưởng đã lưu</h2><div id="ideaBank"><p class="hint">Bấm ⭐ để lưu ý tưởng.</p></div></div>
-</section>
-
-<!-- 4. KỊCH BẢN -->
-<section class="tab" id="t4">
- <div class="card"><h2>⑤ Khung kịch bản</h2>
-  <label>Ý tưởng / tiêu đề</label><input id="sTitle" placeholder="Chọn từ kho hoặc nhập">
-  <label>Cấu trúc</label><select id="sStruct">
-   <option value="loop">Chuỗi tò mò (Hook → 3 bí mật → Twist)</option>
-   <option value="pas">PAS (Vấn đề → Khuấy động → Giải pháp)</option>
-   <option value="story">Kể chuyện (Bối cảnh → Xung đột → Bài học)</option>
-   <option value="list">Danh sách (Top N)</option>
-   <option value="myth">Phá lầm tưởng (Bạn nghĩ… → Thực ra…)</option></select>
-  <label>Thời lượng</label><select id="sLen"><option value="30">30 giây</option><option value="60">60 giây</option><option value="180">3 phút</option><option value="600">10 phút</option></select>
-  <button onclick="genScript()">Tạo khung</button><button class="sec" onclick="copyEl('scriptOut')">Copy</button>
-  <div class="out" id="scriptOut"></div>
+<!-- SETUP -->
+<section class="tab on" id="s">
+ <div class="card"><h2>① Thông số dự án</h2>
+  <p class="hint">Chỉ điền một lần. Mọi template tự lấy các giá trị này.</p>
+  <label>Chủ đề / ngách</label>
+  <select id="preset" onchange="applyPreset()"><option value="">— chọn nhanh ngách gợi ý —</option></select>
+  <input id="niche" placeholder="vd: tâm lý học hành vi" style="margin-top:6px">
+  <div class="g2">
+   <div><label>Nền tảng</label><select id="plat"><option>TikTok</option><option>YouTube Shorts</option><option>YouTube dài</option><option>Facebook Reels</option><option>Instagram Reels</option></select></div>
+   <div><label>Ngôn ngữ video</label><select id="lang"><option>Tiếng Việt</option><option>Português do Brasil</option><option>English (US)</option><option>Español (LatAm)</option><option>Bahasa Indonesia</option></select></div>
+   <div><label>Định dạng</label><select id="fmt"><option>1 slide ảnh</option><option>Carousel 5–7 slide</option><option>Video ngắn 30–60s</option><option>Video dài 8–12 phút</option></select></div>
+   <div><label>Giọng điệu</label><select id="tone"><option>sâu lắng, đồng cảm</option><option>bí ẩn, hồi hộp</option><option>hài hước, gần gũi</option><option>chuyên gia, rõ ràng</option><option>truyền cảm hứng mạnh</option></select></div>
+  </div>
+  <label>Khán giả mục tiêu</label><input id="aud" placeholder="vd: người trẻ 18–30 đang đi làm">
+  <label>Phong cách hình ảnh</label><select id="vis"><option>cinematic photorealistic, moody</option><option>minimal clean flat illustration</option><option>soft anime watercolor</option><option>3D stylized Pixar-like</option><option>vintage 35mm film photo</option><option>dark fantasy painterly</option></select>
+  <label>Màu chủ đạo</label><input id="col" value="deep blue-purple shadows with warm golden accent light">
+  <label>Nhân vật cố định (tiếng Anh, để trống nếu không cần)</label><input id="chr" placeholder="vd: Vietnamese woman ~25, shoulder-length black hair, beige coat">
+  <label>Ý tưởng / tiêu đề bài đang làm</label><input id="topic" placeholder="vd: Tại sao càng mệt càng khó ngủ?">
+  <label>Ghi chú thêm (nội dung, kịch bản, số liệu…)</label><textarea id="note" placeholder="Dán kịch bản hoặc thông tin vào đây để template dùng"></textarea>
+  <button style="width:100%;margin-top:10px" onclick="saveSet();go('l')">Lưu & mở thư viện →</button>
  </div>
 </section>
 
-<!-- 5. HÌNH ẢNH -->
-<section class="tab" id="t5">
- <div class="card"><h2>⑥ Visual Bible (khóa 1 lần, dùng cả series)</h2>
-  <label>Phong cách</label><select id="vStyle"><option>cinematic photorealistic</option><option>minimal flat illustration</option><option>anime soft light</option><option>3D Pixar-like render</option><option>vintage film photo</option></select>
-  <label>Bảng màu & ánh sáng</label><input id="vColor" value="dark blue-purple tones with warm golden accent light">
-  <label>Nhân vật chính (mô tả cố định)</label><input id="vChar" placeholder="vd: Vietnamese man ~25, short black hair, grey hoodie">
-  <label>Tỉ lệ khung</label><select id="vRatio"><option>9:16 vertical</option><option>16:9 horizontal</option><option>1:1 square</option><option>4:5 portrait</option></select>
-  <button onclick="saveBible()">Khóa Visual Bible</button>
- </div>
- <div class="card"><h2>Tạo prompt cảnh</h2>
-  <label>Nội dung cảnh (tiếng Việt hoặc Anh)</label><textarea id="vScene" placeholder="vd: nhân vật ngồi một mình bên cửa sổ mưa lúc nửa đêm, nhìn điện thoại"></textarea>
-  <label>Góc máy</label><select id="vShot"><option>medium shot</option><option>close-up</option><option>wide establishing shot</option><option>over-the-shoulder</option><option>low angle</option><option>top-down</option></select>
-  <button onclick="genPrompt()">Tạo prompt</button><button class="sec" onclick="copyEl('promptOut')">Copy</button>
-  <div class="out" id="promptOut"></div>
+<!-- LIBRARY -->
+<section class="tab" id="l">
+ <input id="q" placeholder="🔍 Tìm template..." oninput="renderLib()">
+ <div class="chips" id="cats"></div>
+ <div id="lib"></div>
+</section>
+
+<!-- FLOW -->
+<section class="tab" id="f">
+ <div class="card"><h2>⚡ Quy trình 1 bài trong ~20 phút</h2>
+  <p class="hint">Làm lần lượt từ trên xuống. Copy prompt, dán vào AI, dán kết quả vào ô “Ghi chú” ở tab Thiết lập rồi làm bước tiếp theo.</p>
+  <div id="flow"></div>
  </div>
 </section>
 
-<!-- 6. ĐĂNG & ĐO -->
-<section class="tab" id="t6">
- <div class="card"><h2>⑦ Caption & hashtag</h2>
-  <label>Câu chốt / nội dung chính</label><textarea id="cMain" placeholder="Mỗi dòng 1 ý"></textarea>
-  <label>Hashtag (cách nhau bởi dấu phẩy)</label><input id="cTags" placeholder="tamly, cuocsong, baihoc">
-  <button onclick="genCaption()">Tạo caption</button><button class="sec" onclick="copyEl('capOut')">Copy</button>
-  <div class="out" id="capOut"></div>
+<!-- MINE -->
+<section class="tab" id="m">
+ <div class="card"><h2>➕ Thêm template của bạn</h2>
+  <p class="hint">Có thể dùng biến: {niche} {plat} {lang} {fmt} {tone} {aud} {vis} {col} {chr} {topic} {note}</p>
+  <label>Tên</label><input id="nT">
+  <label>Nội dung prompt</label><textarea id="nP" style="min-height:120px"></textarea>
+  <button style="margin-top:8px" onclick="addMine()">Lưu template</button>
  </div>
- <div class="card"><h2>⑧ Nhập số liệu & chẩn đoán</h2>
-  <div class="row"><div><label>Tên video</label><input id="kName"></div><div><label>Views</label><input id="kV" type="number"></div></div>
-  <div class="row"><div><label>Xem hết / Retention %</label><input id="kR" type="number"></div><div><label>Like %</label><input id="kL" type="number"></div></div>
-  <div class="row"><div><label>Share + Save</label><input id="kS" type="number"></div><div><label>CTR % (YouTube)</label><input id="kC" type="number"></div></div>
-  <button onclick="addKpi()">Lưu & chẩn đoán</button>
-  <div id="kpiOut"></div>
- </div>
-</section>
-
-<!-- 7. DỰ ÁN -->
-<section class="tab" id="t7">
- <div class="card"><h2>Lộ trình 30 ngày</h2><div class="steps" id="bar"></div><div id="roadmap"></div></div>
- <div class="card"><h2>Sao lưu dữ liệu</h2>
-  <p class="hint">Dữ liệu lưu trong trình duyệt điện thoại. Xuất JSON định kỳ để không mất.</p>
-  <button onclick="exportData()">⬇ Xuất JSON</button>
-  <button class="sec" onclick="document.getElementById('imp').click()">⬆ Nhập JSON</button>
-  <input type="file" id="imp" accept=".json" style="display:none" onchange="importData(this)">
-  <button class="warn" onclick="resetAll()">🗑 Xóa toàn bộ</button>
-  <p class="hint" id="usage" style="margin-top:10px"></p>
+ <div class="card"><h2>Sao lưu</h2>
+  <button onclick="exp()">⬇ Xuất JSON</button> <button class="sec" onclick="$('imp').click()">⬆ Nhập</button>
+  <input type="file" id="imp" accept=".json" hidden onchange="imp(this)">
  </div>
 </section>
 </main>
 
-<nav id="nav">
- <button class="on" data-t="t1"><b>🌍</b>Thị trường</button>
- <button data-t="t2"><b>🎯</b>Ngách</button>
- <button data-t="t3"><b>💡</b>Ý tưởng</button>
- <button data-t="t4"><b>📝</b>Kịch bản</button>
- <button data-t="t5"><b>🎨</b>Hình ảnh</button>
- <button data-t="t6"><b>📊</b>Đăng&Đo</button>
- <button data-t="t7"><b>📁</b>Dự án</button>
+<nav>
+ <button class="on" data-t="s"><i>⚙️</i>Thiết lập</button>
+ <button data-t="l"><i>📚</i>Thư viện</button>
+ <button data-t="f"><i>⚡</i>Quy trình</button>
+ <button data-t="m"><i>✍️</i>Của tôi</button>
 </nav>
 <div class="toast" id="toast"></div>
 
 <script>
-const KEY='creatorCompass_v1';
-let D=JSON.parse(localStorage.getItem(KEY)||'{}');
-D.res=D.res||{};D.niches=D.niches||[];D.ideas=D.ideas||[];D.kpi=D.kpi||[];D.bible=D.bible||null;D.road=D.road||{};
-const save=()=>{localStorage.setItem(KEY,JSON.stringify(D));usage()};
 const $=id=>document.getElementById(id);
-const toast=m=>{const t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',1600)};
-const pick=a=>a[Math.floor(Math.random()*a.length)];
+const K='promptKit_v1';
+let S=JSON.parse(localStorage.getItem(K)||'{}');S.fav=S.fav||[];S.mine=S.mine||[];S.v=S.v||{};
+const F=['niche','plat','lang','fmt','tone','aud','vis','col','chr','topic','note'];
+const store=()=>localStorage.setItem(K,JSON.stringify(S));
+const toast=m=>{$('toast').textContent=m;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',1400)};
 
-/* NAV */
+const PRESETS={
+'Tâm lý – cảm xúc':['tâm lý học & cảm xúc đời thường','người trẻ 18–30 hay overthinking, áp lực công việc','sâu lắng, đồng cảm'],
+'Tài chính cá nhân':['tài chính cá nhân cho người mới đi làm','người 22–35 thu nhập trung bình','chuyên gia, rõ ràng'],
+'Bí ẩn – truyền thuyết':['truyền thuyết, bí ẩn chưa có lời giải','người lớn thích chuyện kỳ bí','bí ẩn, hồi hộp'],
+'Lịch sử ít người biết':['sự thật lịch sử ít người biết','người tò mò 18–45','bí ẩn, hồi hộp'],
+'Khoa học tò mò':['khoa học đời sống & cơ thể người','học sinh, sinh viên, người tò mò','hài hước, gần gũi'],
+'Phát triển bản thân':['tư duy & thói quen thành công','người trẻ muốn thay đổi bản thân','truyền cảm hứng mạnh'],
+'Tình cảm – mối quan hệ':['tình yêu, chia tay, mối quan hệ','người 18–30','sâu lắng, đồng cảm'],
+'AI & công nghệ':['mẹo dùng AI & công nghệ cho công việc','dân văn phòng','chuyên gia, rõ ràng'],
+'Mẹo sống – gia đình':['mẹo sống, mẹo nhà cửa tiết kiệm','người nội trợ, gia đình trẻ','hài hước, gần gũi'],
+'Sức khỏe – giấc ngủ':['sức khỏe, giấc ngủ, năng lượng (không thay lời khuyên y tế)','dân văn phòng hay mệt mỏi','chuyên gia, rõ ràng'],
+'Kỹ thuật nhà máy':['giải thích quy trình sản xuất & kỹ thuật dễ hiểu','kỹ sư trẻ, sinh viên kỹ thuật','chuyên gia, rõ ràng'],
+'Tóm tắt sách':['tóm tắt bài học từ sách nổi tiếng','người bận rộn thích học nhanh','truyền cảm hứng mạnh']};
+
+/* ===== TEMPLATE LIBRARY ===== */
+const T=[
+// NGHIÊN CỨU
+['🔎 Nghiên cứu','Phân tích ngách toàn diện','Đánh giá ngách có nên làm không',
+`Đóng vai chuyên gia chiến lược nội dung {plat}. Phân tích ngách "{niche}" cho khán giả {aud}, ngôn ngữ {lang}.
+Trả lời theo bảng:
+1. Nhu cầu: khán giả đang tìm gì, nỗi đau và mong muốn chính (5 ý).
+2. Mức cạnh tranh: kiểu kênh đang thống trị, khoảng trống còn bỏ ngỏ.
+3. Cách kiếm tiền phù hợp (quảng cáo, affiliate, sản phẩm số…).
+4. Rủi ro chính sách & bản quyền.
+5. 3 góc nhìn khác biệt để một kênh mới nổi bật.
+6. Chấm điểm 1–10 cho: nhu cầu, cạnh tranh, kiếm tiền, độ dễ sản xuất bằng AI. Kết luận: NÊN / CÂN NHẮC / KHÔNG NÊN.`],
+['🔎 Nghiên cứu','So sánh 5 ngách','Chọn ngách tốt nhất khi còn phân vân',
+`Tôi đang phân vân giữa các ngách sau trên {plat} (ngôn ngữ {lang}): {note}
+Hãy so sánh trong một bảng: nhu cầu, cạnh tranh, RPM/kiếm tiền, độ dễ sản xuất bằng AI, độ bền (evergreen), tốc độ tăng follow. Chấm thang 10, tính tổng điểm và đề xuất 1 ngách kèm lý do. Nếu thông tin chưa chắc, ghi rõ là ước tính.`],
+['🔎 Nghiên cứu','Chân dung khán giả','Hiểu sâu người xem',
+`Xây dựng chân dung khán giả cho kênh "{niche}" trên {plat}, nhóm {aud}.
+Gồm: độ tuổi, hoàn cảnh, 1 ngày điển hình, 7 nỗi đau, 5 mong muốn thầm kín, 10 câu họ hay tự hỏi, từ ngữ họ hay dùng, lý do họ lưu/chia sẻ bài. Viết bằng {lang}.`],
+['🔎 Nghiên cứu','Mổ xẻ video đối thủ','Học từ video viral',
+`Phân tích video/bài viral sau (nội dung hoặc mô tả): {note}
+Chỉ ra: hook 3 giây đầu, cấu trúc, cảm xúc chính, lý do người xem lưu/chia sẻ, điểm yếu có thể làm tốt hơn. Sau đó đề xuất 3 phiên bản của tôi cho ngách "{niche}" với góc nhìn khác, không sao chép.`],
+['🔎 Nghiên cứu','Trend & mùa vụ tháng này','Bắt sóng nội dung nóng',
+`Hôm nay là {date}. Gợi ý 10 chủ đề cho ngách "{niche}" trên {plat} gắn với: thời tiết/mùa hiện tại, ngày lễ sắp tới, sự kiện tâm lý theo mùa (thi cử, cuối năm, lương thưởng…). Mỗi chủ đề có: hook, lý do phù hợp thời điểm, ngày đăng gợi ý.`],
+
+// Ý TƯỞNG
+['💡 Ý tưởng','30 ý tưởng theo cụm','Kho ý tưởng cho 1 tháng',
+`Tạo 30 ý tưởng {fmt} cho kênh "{niche}" trên {plat}, khán giả {aud}, giọng {tone}, ngôn ngữ {lang}.
+Chia 5 cụm: Sự thật bất ngờ / Nỗi đau quen thuộc / Câu chuyện / Mẹo áp dụng ngay / Tranh luận.
+Mỗi ý: tiêu đề hook (≤12 từ) + 1 câu mô tả + điểm tiềm năng viral 1–10. Sắp xếp theo điểm giảm dần.`],
+['💡 Ý tưởng','10 hook cho 1 chủ đề','Tối ưu 3 giây đầu',
+`Viết 10 hook cho chủ đề "{topic}" (ngách {niche}, {plat}, {lang}, giọng {tone}).
+Dùng 10 kiểu khác nhau: câu hỏi "Tại sao", phủ định, con số, bí mật, cảnh báo, so sánh, thử thách, câu chuyện, gọi tên người xem, khoảng trống tò mò. Mỗi hook ≤ 12 từ. Đánh dấu 3 hook mạnh nhất.`],
+['💡 Ý tưởng','Biến 1 bài thắng thành 10','Nhân bản bài đang lên',
+`Bài sau đang có kết quả tốt: "{topic}". Phân tích vì sao nó hiệu quả, rồi tạo 10 biến thể giữ nguyên "công thức thắng" nhưng đổi: góc nhìn, đối tượng, tình huống, định dạng. Ngách {niche}, {plat}, {lang}.`],
+['💡 Ý tưởng','Series nhiều phần','Giữ người xem quay lại',
+`Thiết kế 1 series 7 phần về "{topic}" cho {plat}. Mỗi phần: tiêu đề, nội dung chính, cliffhanger cuối phần dẫn sang phần sau. Ngôn ngữ {lang}, giọng {tone}.`],
+
+// NỘI DUNG / KỊCH BẢN
+['📝 Nội dung','1 slide trích dẫn','Ảnh 1 câu dễ lưu, dễ chia sẻ',
+`Viết 5 phương án nội dung cho 1 slide ảnh {plat} chủ đề "{topic}", ngách {niche}, giọng {tone}, {lang}.
+Mỗi phương án: tiêu đề nhỏ (≤5 từ) + câu chính (≤20 từ, đọc là thấy mình trong đó) + 1 từ khóa cần tô màu nhấn + caption 2–3 dòng. Tránh sáo rỗng, ưu tiên cảm giác "đúng quá, phải lưu lại".`],
+['📝 Nội dung','Carousel chuỗi tò mò','5–7 slide giữ người lướt',
+`Viết carousel 7 slide cho {plat} chủ đề "{topic}", ngách {niche}, {lang}, giọng {tone}.
+Slide 1: hook dạng "Tại sao…?" + câu treo.
+Slide 2–6: mỗi slide 1 ý, ≤25 từ, nhãn (SỰ THẬT / BÍ MẬT / SAI LẦM / CÁCH LÀM), cuối mỗi slide có câu treo dẫn sang slide sau.
+Slide 7: kết luận đáng lưu + CTA.
+Kèm 1 dòng mô tả hình ảnh cho từng slide (tiếng Anh).`],
+['📝 Nội dung','Kịch bản video ngắn','30–60s có phân cảnh',
+`Viết kịch bản {fmt} cho {plat}: "{topic}". Ngách {niche}, khán giả {aud}, giọng {tone}, lời thoại bằng {lang}.
+Trình bày dạng bảng: Cảnh | Thời gian | Lời đọc (VO) | Chữ trên màn hình | Mô tả hình ảnh (tiếng Anh).
+Yêu cầu: hook ≤3 giây, mỗi câu ≤15 từ, có 1 câu twist ở 70% thời lượng, kết bằng câu đáng chia sẻ + CTA nhẹ.`],
+['📝 Nội dung','Kịch bản video dài','8–12 phút cho YouTube',
+`Viết kịch bản YouTube 10 phút: "{topic}", ngách {niche}, {lang}, giọng {tone}.
+Cấu trúc: Cold open 30s → Intro hứa hẹn → 4 chương (mỗi chương có mini-hook, nội dung, chuyển cảnh) → Cao trào → Kết + CTA.
+Chia đoạn đánh số SHOT 1, 2, 3… mỗi shot 1–3 câu VO kèm mô tả hình ảnh tiếng Anh. Khoảng 1.400 từ.`],
+['📝 Nội dung','Kể chuyện cảm xúc','Câu chuyện chạm người xem',
+`Viết một câu chuyện ngắn (150–200 từ, {lang}) về "{topic}" cho khán giả {aud}. Có nhân vật cụ thể, khoảnh khắc đời thường, 1 chi tiết nhỏ gây xúc động, kết bằng 1 câu bài học không giáo điều. Giọng {tone}.`],
+['📝 Nội dung','Biên tập lại kịch bản','Làm ngắn, mạnh, tự nhiên',
+`Biên tập lại nội dung sau cho {plat}, {lang}: 
+{note}
+Yêu cầu: cắt 30% chữ thừa, hook mạnh hơn, câu ngắn, nhịp đọc tự nhiên, giữ nguyên ý chính. Liệt kê ngắn những gì đã sửa.`],
+['📝 Nội dung','Kiểm tra sự thật','Tránh sai thông tin',
+`Kiểm tra độ chính xác của nội dung sau, đánh dấu từng nhận định là ĐÚNG / CẦN SỬA / KHÔNG KIỂM CHỨNG ĐƯỢC, giải thích ngắn và đề xuất cách viết an toàn hơn:
+{note}`],
+
+// HÌNH ẢNH
+['🎨 Hình ảnh','Visual Bible','Khóa phong cách cho cả series',
+`Tạo Visual Bible cho series "{niche}" trên {plat}. Phong cách: {vis}. Màu: {col}. Nhân vật: {chr}.
+Gồm: bảng màu (mã HEX), ánh sáng, góc máy hay dùng, bối cảnh lặp lại, mô tả nhân vật chi tiết bằng tiếng Anh (khuôn mặt, tóc, trang phục cố định), font & bố cục chữ, danh sách những điều KHÔNG được xuất hiện. Viết thành một khối "CONTINUITY LOCK" để dán vào mọi prompt ảnh.`],
+['🎨 Hình ảnh','Prompt ảnh 1 cảnh','Dán vào Copilot / Flow / Midjourney',
+`{vis}, {topic}. 
+Scene: {note}
+Character lock: {chr}, same face, hair and outfit in every image.
+Lighting & color: {col}.
+Composition: {ratio}, subject clearly readable, empty negative space at top third for text overlay.
+Quality: sharp focus, realistic proportions, natural textures, coherent shadows.
+Negative: no text, no letters, no watermark, no logo, no extra fingers, no deformed hands, no duplicate people, no distorted face, no cluttered background, no oversaturated colors.`],
+['🎨 Hình ảnh','Prompt ảnh hàng loạt từ kịch bản','Ra prompt cho mọi cảnh',
+`Từ kịch bản dưới đây, tạo prompt ảnh tiếng Anh cho TỪNG cảnh.
+Mỗi prompt gồm: style ({vis}), shot type, mô tả cảnh, character lock ({chr}), lighting ({col}), tỉ lệ {ratio}, và dòng Negative chống lỗi (no text, no watermark, no extra fingers, no deformed face, no duplicate characters, no modern objects nếu bối cảnh cổ).
+Giữ continuity giữa các cảnh. Đánh số trùng với số cảnh.
+Kịch bản:
+{note}`],
+['🎨 Hình ảnh','Ảnh slide có chữ','Ảnh TikTok kèm text',
+`Tạo ảnh {ratio} cho {plat}: {vis}, {col}. Hình ảnh minh họa đúng ý "{topic}"{chrx}.
+Bố cục: nhân vật/vật thể ở 2/3 dưới, khoảng trống tối phía trên cho chữ.
+Chữ ({lang}, lớn, đậm, căn giữa, chính tả chính xác): "{note}" — tô màu vàng cho từ khóa quan trọng.
+Không thêm bất kỳ chữ nào khác, không chữ nhỏ trên sách, giấy, bảng hiệu; không watermark.`],
+['🎨 Hình ảnh','Thumbnail YouTube','CTR cao',
+`Đề xuất 3 concept thumbnail cho video "{topic}" (ngách {niche}). Mỗi concept: chủ thể chính, biểu cảm, đạo cụ, chữ trên thumbnail (≤4 từ, {lang}), màu tương phản, và prompt ảnh tiếng Anh 16:9 theo phong cách {vis}, không chữ trong ảnh, chủ thể to chiếm 40% khung.`],
+['🎨 Hình ảnh','Sửa ảnh bị lỗi','Chỉ sửa đúng lỗi',
+`Chỉnh sửa ảnh đính kèm. CHỈ sửa các lỗi sau: {note}
+Giữ nguyên tuyệt đối: bố cục, nhân vật ({chr}), trang phục, ánh sáng ({col}), góc máy, bối cảnh. Không thêm hay bớt chi tiết nào khác.`],
+
+// VIDEO & VOICE
+['🎬 Video & Voice','Prompt chuyển động (Flow/Veo/Kling)','Ảnh → video 5–8s',
+`Animate this image, 6 seconds, {ratio}.
+Camera: slow push-in (or gentle pan), smooth and stable.
+Motion: subtle natural movement only — {note}
+Keep the character ({chr}) identical: same face, outfit, proportions throughout.
+Lighting stays consistent: {col}.
+Avoid: morphing faces, extra limbs, sudden cuts, flickering, text appearing, camera shake, objects changing shape.`],
+['🎬 Video & Voice','Lời đọc voice-over','Chuẩn nhịp cho AI voice',
+`Chuyển nội dung sau thành lời đọc voice-over {lang} cho AI giọng nói: chia câu ngắn, thêm dấu "…" ở chỗ cần ngắt, viết số thành chữ, đánh dấu [nhấn] cho từ quan trọng, mỗi đoạn tương ứng 1 cảnh. Giọng {tone}.
+{note}`],
+['🎬 Video & Voice','Chọn nhạc & âm thanh','Mood âm thanh',
+`Đề xuất mood nhạc nền, nhịp BPM, 5 hiệu ứng âm thanh và thời điểm chèn cho video "{topic}" giọng {tone}. Gợi ý từ khóa để tìm nhạc miễn phí bản quyền.`],
+
+// ĐĂNG
+['📣 Đăng bài','Caption + 5 hashtag','Ngắt dòng ⠀ cho TikTok',
+`Viết 3 caption {plat} cho bài "{topic}" ({lang}, giọng {tone}): dòng 1 là hook, 2–4 dòng nội dung, 1 câu hỏi kích bình luận. Ngắt dòng bằng ký tự ⠀. Kèm đúng 5 hashtag: 2 rộng, 2 ngách {niche}, 1 trend.`],
+['📣 Đăng bài','Tiêu đề & mô tả YouTube','SEO',
+`Viết 5 tiêu đề YouTube (≤60 ký tự, {lang}) cho video "{topic}", mô tả 150 từ có từ khóa, 15 tag, và 3 câu ghim bình luận kích tương tác.`],
+['📣 Đăng bài','Lịch đăng 2 tuần','Kế hoạch nội dung',
+`Lập lịch đăng 14 ngày cho kênh "{niche}" trên {plat}: ngày, giờ đăng tốt cho khán giả {aud}, chủ đề, định dạng, mục tiêu (viral/lưu/bình luận/follow). Xen kẽ các cụm nội dung để không nhàm.`],
+['📣 Đăng bài','Trả lời bình luận','Tăng tương tác',
+`Viết 5 cách trả lời cho bình luận sau, giọng {tone}, {lang}, tự nhiên, gợi tiếp cuộc trò chuyện, có 1 cách gợi ý làm video trả lời: "{note}"`],
+
+// PHÂN TÍCH
+['📊 Phân tích','Chẩn đoán video','Vì sao view thấp/cao',
+`Phân tích số liệu video "{topic}" trên {plat}: {note}
+(views, thời gian xem TB, % xem hết, like, share, save, follow, CTR nếu có)
+Chẩn đoán vấn đề nằm ở: hook / nội dung giữa / kết / thumbnail-tiêu đề / chủ đề. Đưa 3 thay đổi cụ thể cho bài tiếp theo.`],
+['📊 Phân tích','Tổng kết tuần','Ra quyết định tiếp',
+`Dưới đây là số liệu các bài tuần này: {note}
+Hãy: xếp hạng bài, tìm điểm chung của bài tốt nhất và kém nhất, đề xuất nên làm thêm gì / bỏ gì, và gợi ý 5 chủ đề tuần sau. Kết luận: tiếp tục / xoay góc / đổi ngách.`]
+];
+
+let cat='Tất cả';
+function vars(){const v={...S.v};F.forEach(k=>v[k]=v[k]||'');
+ v.date=new Date().toLocaleDateString('vi-VN');
+ v.ratio=/YouTube dài/.test(v.plat)?'16:9 horizontal':'9:16 vertical';
+ v.chrx=v.chr?`, nhân vật: ${v.chr}`:'';
+ if(!v.chr)v.chr='(no fixed character)';
+ ['niche','topic','aud','note'].forEach(k=>{if(!S.v[k])v[k]='['+{niche:'NGÁCH',topic:'CHỦ ĐỀ',aud:'KHÁN GIẢ',note:'DÁN NỘI DUNG'}[k]+']'});
+ return v}
+const fill=p=>{const v=vars();return p.replace(/\{(\w+)\}/g,(m,k)=>v[k]!==undefined?v[k]:m)};
+function all(){return T.concat(S.mine.map(x=>['✍️ Của tôi',x.n,'Template tự tạo',x.p]))}
+function renderCats(){const cs=['Tất cả','⭐ Yêu thích',...new Set(all().map(t=>t[0]))];
+ $('cats').innerHTML=cs.map(c=>`<button class="${c==cat?'on':''}" onclick="cat='${c}';renderCats();renderLib()">${c}</button>`).join('')}
+function renderLib(){const q=$('q').value.toLowerCase();
+ const list=all().map((t,i)=>({t,i})).filter(({t})=>(cat=='Tất cả'||t[0]==cat||(cat=='⭐ Yêu thích'&&S.fav.includes(t[1])))&&(t[1]+t[2]).toLowerCase().includes(q));
+ $('lib').innerHTML=list.map(({t,i})=>`<div class="tp"><div class="h"><b>${t[1]}</b><button class="star ${S.fav.includes(t[1])?'on':''}" onclick="fav('${t[1].replace(/'/g,"\\'")}')">★</button></div>
+ <div class="d">${t[0]} · ${t[2]}</div>
+ <div class="acts"><button onclick="cp(${i})">📋 Copy prompt</button><button class="sec" onclick="pv(${i})">👁 Xem</button></div>
+ <div class="out" id="pv${i}" style="display:none"></div></div>`).join('')||'<p class="hint">Không có template.</p>'}
+function cp(i){navigator.clipboard.writeText(fill(all()[i][3])).then(()=>toast('Đã copy ✓'))}
+function pv(i){const e=$('pv'+i);e.style.display=e.style.display=='none'?'block':'none';e.textContent=fill(all()[i][3])}
+function fav(n){S.fav.includes(n)?S.fav.splice(S.fav.indexOf(n),1):S.fav.push(n);store();renderLib()}
+
+const FLOW=['10 hook cho 1 chủ đề','Carousel chuỗi tò mò','Kịch bản video ngắn','Prompt ảnh hàng loạt từ kịch bản','Prompt chuyển động (Flow/Veo/Kling)','Lời đọc voice-over','Caption + 5 hashtag','Chẩn đoán video'];
+function renderFlow(){const a=all();$('flow').innerHTML=FLOW.map((n,k)=>{const i=a.findIndex(t=>t[1]==n);
+ return `<div class="step"><span>${k+1}</span>${n}<button onclick="cp(${i})">Copy</button></div>`}).join('')+
+ `<p class="hint" style="margin-top:8px">Làm 1 slide: chỉ cần bước 1 → “1 slide trích dẫn” → “Ảnh slide có chữ” → bước 7.</p>`}
+
+function saveSet(){F.forEach(k=>S.v[k]=$(k).value.trim());store();toast('Đã lưu')}
+function loadSet(){F.forEach(k=>{if(S.v[k]!==undefined&&S.v[k]!=='')$(k).value=S.v[k]})}
+function applyPreset(){const p=PRESETS[$('preset').value];if(!p)return;$('niche').value=p[0];$('aud').value=p[1];$('tone').value=p[2]}
+function addMine(){const n=$('nT').value.trim(),p=$('nP').value.trim();if(!n||!p)return toast('Nhập đủ');S.mine.push({n,p});store();$('nT').value=$('nP').value='';renderCats();renderLib();toast('Đã thêm')}
+function exp(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='prompt-kit.json';a.click()}
+function imp(el){const r=new FileReader();r.onload=e=>{S=JSON.parse(e.target.result);store();location.reload()};r.readAsText(el.files[0])}
+function go(t){document.querySelector(`nav [data-t=${t}]`).click()}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
- document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
- document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));$(b.dataset.t).classList.add('on');scrollTo(0,0)});
-
-/* 1. MARKET */
-const MK={
- 'Việt Nam':{rpm:'Thấp (~0.2–1 USD/1000 view YouTube)',note:'Lượng xem lớn, dễ viral; nên kết hợp affiliate (TikTok Shop, Shopee) thay vì chỉ trông vào quảng cáo.',hot:'Tâm lý – cảm xúc, tài chính cá nhân, review đồ gia dụng, mẹo sống, chuyện lạ – bí ẩn, nấu ăn nhanh'},
- 'Brazil':{rpm:'Trung bình thấp (~0.5–2 USD)',note:'Khán giả cực đông, tương tác cao, mê bí ẩn/kinh dị, bóng đá, hài; cần tiếng Bồ Đào Nha tự nhiên.',hot:'Truyền thuyết – kinh dị, tò mò khoa học, chuyện có thật, tôn giáo – động lực'},
- 'Mỹ / Anh':{rpm:'Cao (~3–15 USD)',note:'Cạnh tranh khốc liệt nhưng RPM cao nhất; thắng nhờ góc nhìn hẹp và chất lượng kịch bản.',hot:'Tài chính, true crime, lịch sử, AI/công nghệ, sức khỏe – tâm lý'},
- 'Indonesia':{rpm:'Thấp',note:'Thị trường TikTok khổng lồ, mạnh về bán hàng; nội dung đời thường, hài, tôn giáo.',hot:'Mẹo sống, bí ẩn, hài, review sản phẩm rẻ'},
- 'Philippines':{rpm:'Thấp – trung bình',note:'Hiểu tiếng Anh tốt → có thể làm nội dung tiếng Anh đơn giản; thích drama, tình cảm.',hot:'Chuyện tình cảm, gia đình, giải trí'},
- 'Mexico / LatAm':{rpm:'Trung bình thấp',note:'Tiếng Tây Ban Nha phủ ~20 quốc gia → mở rộng tốt; mê kinh dị, bí ẩn, động lực.',hot:'Leyendas, misterio, curiosidades, motivación'},
- 'Đức / châu Âu':{rpm:'Cao (~3–10 USD)',note:'RPM cao, ít creator AI; khó vì ngôn ngữ và chuẩn chất lượng.',hot:'Tài chính, lịch sử, tài liệu, công nghệ'}};
-function marketAdvice(){
- const m=MK[$('mkt').value],p=$('plat').value,g=$('goal').value;
- let tip={'Kiếm tiền quảng cáo (RPM)':'Ưu tiên YouTube dài + thị trường RPM cao. TikTok chủ yếu dùng để kéo traffic.',
- 'Affiliate / bán hàng':'Ưu tiên TikTok/Reels, ngách gắn sản phẩm (gia dụng, làm đẹp, sách, đồ công nghệ).',
- 'Xây thương hiệu cá nhân':'Chọn ngách gắn chuyên môn thật của bạn (vd: kỹ thuật, quy trình sản xuất) – khó bị sao chép.',
- 'Tăng follow nhanh':'Định dạng ngắn, hook mạnh, bám trend âm thanh; đăng 1–2 bài/ngày trong 30 ngày đầu.'}[g];
- $('mktOut').textContent=`📍 ${$('mkt').value} • ${p}\n💰 RPM: ${m.rpm}\n🧭 Nhận định: ${m.note}\n🔥 Ngách đang mạnh: ${m.hot}\n🎯 Với mục tiêu “${g}”: ${tip}\n\n➡ Bước tiếp: làm checklist bên dưới, rồi sang tab 🎯 Ngách để chấm điểm 3–5 ngách.`;
- D.market={mkt:$('mkt').value,plat:p,goal:g};save();}
-const RES=['Gõ 3–5 từ khóa ngách trên Google Trends, so sánh xu hướng 12 tháng (tăng/giảm/theo mùa)',
-'Vào TikTok Creative Center: xem hashtag & âm thanh đang lên tại thị trường đã chọn',
-'Tìm 10 kênh cùng ngách: ghi lại số sub, tần suất đăng, video top view',
-'Lọc kênh nhỏ (<10k sub) mà có video >100k view → dấu hiệu ngách còn cửa',
-'Đọc 50 bình luận ở video top: khán giả hỏi gì, than gì, muốn gì thêm?',
-'Xác định điểm khác biệt của bạn (giọng kể, góc nhìn, hình ảnh, chuyên môn)',
-'Ước tính khả năng sản xuất: 1 video mất bao lâu? Duy trì được bao nhiêu video/tuần?',
-'Kiểm tra rủi ro: bản quyền, chính sách nội dung (bạo lực, y tế, tài chính), nội dung tái sử dụng'];
-function renderRes(){$('resList').innerHTML=RES.map((r,i)=>`<label class="chk"><input type="checkbox" ${D.res[i]?'checked':''} onchange="D.res[${i}]=this.checked;save()"><span>${r}</span></label>`).join('')}
-
-/* 2. NICHE */
-const NICHES=['Tâm lý học hành vi','Tài chính cá nhân','Bí ẩn – truyền thuyết','Lịch sử ít người biết','Chuyện có thật / true crime','Khoa học tò mò','Động lực – phát triển bản thân','Tình cảm – mối quan hệ','Công nghệ & AI','Mẹo sống – đồ gia dụng','Sức khỏe – giấc ngủ','Kỹ thuật – nhà máy (giải thích quy trình)','Review sách tóm tắt','Thiên nhiên – động vật','Du lịch – văn hóa'];
-const CRIT=[['demand','Nhu cầu (lượt tìm/xem)'],['comp','Cạnh tranh (5 = ít đối thủ)'],['money','Khả năng kiếm tiền'],['ease','Dễ sản xuất (AI hỗ trợ được)'],['love','Bạn thích & bền được 1 năm'],['ever','Evergreen (không lỗi thời)']];
-function weights(){const g=(D.market||{}).goal||'';return{demand:1.2,comp:1,money:g.includes('RPM')||g.includes('Affiliate')?1.5:1,ease:1,love:g.includes('thương hiệu')?1.5:1.2,ever:g.includes('follow')?.7:1}}
-function renderNicheForm(){$('nichePick').innerHTML='<option value="">— gợi ý —</option>'+NICHES.map(n=>`<option>${n}</option>`).join('');
- $('critBox').innerHTML=CRIT.map(([k,l])=>`<label>${l}: <b id="v_${k}">3</b></label><input type="range" min="1" max="5" value="3" id="c_${k}" oninput="$('v_${k}').textContent=this.value">`).join('')}
-function addNiche(){const n=$('nicheName').value.trim();if(!n)return toast('Nhập tên ngách');const w=weights();let s=0,max=0,sc={};
- CRIT.forEach(([k])=>{sc[k]=+$('c_'+k).value;s+=sc[k]*w[k];max+=5*w[k]});
- D.niches.push({n,sc,total:Math.round(s/max*100)});save();renderNiches();toast('Đã lưu')}
-function renderNiches(){if(!D.niches.length)return;const a=[...D.niches].sort((x,y)=>y.total-x.total);
- $('nicheTable').innerHTML=`<table><tr><th>Ngách</th>${CRIT.map(c=>`<th>${c[1].split(' ')[0]}</th>`).join('')}<th>Điểm</th><th></th></tr>`+
- a.map((x,i)=>`<tr><td>${i==0?'🏆 ':''}${x.n}</td>${CRIT.map(([k])=>`<td>${x.sc[k]}</td>`).join('')}<td class="score">${x.total}</td><td><span style="color:var(--bad)" onclick="D.niches.splice(${D.niches.indexOf(x)},1);save();renderNiches()">✕</span></td></tr>`).join('')+'</table>'+
- `<p class="hint" style="margin-top:8px">≥75: nên làm ngay • 60–74: làm thử 10 video • &lt;60: bỏ qua. Mẹo: chọn ngách điểm cao nhất rồi sang tab 💡.</p>`}
-
-/* 3. IDEAS */
-const HOOKS=['Tại sao {a} lại {p}? Câu trả lời không như bạn nghĩ','3 dấu hiệu cho thấy bạn đang {p} mà không biết','Sự thật ít ai nói về {n}','Nếu bạn {p}, hãy xem điều này trước khi quá muộn','Điều gì xảy ra với não bộ khi bạn {p}?','Sai lầm phổ biến nhất của {a} về {n}','1 thói quen nhỏ giúp thoát khỏi việc {p}','Người thành công làm gì khác khi gặp chuyện {p}?','Câu chuyện có thật: từ {p} đến thay đổi hoàn toàn','Bạn nghĩ {n} là vậy? Thực ra ngược lại','Đừng làm điều này nếu bạn đang {p}','Bí mật đằng sau {n} mà 90% người không biết','Thí nghiệm nổi tiếng giải thích vì sao {a} hay {p}','Đọc đến cuối để biết bạn thuộc kiểu người nào trong {n}'];
-function genIdeas(){const n=$('iNiche').value||'chủ đề này',a=$('iAud').value||'mọi người',p=$('iPain').value||'mắc kẹt';
- const ps=p.split(',').map(s=>s.trim()).filter(Boolean);const hs=[...HOOKS].sort(()=>Math.random()-.5).slice(0,10);
- $('ideaOut').innerHTML=hs.map(h=>{const t=h.replace('{n}',n).replace('{a}',a).replace('{p}',pick(ps));
-  return `<div class="item">${t}<span class="x" style="color:var(--acc)" onclick='saveIdea(${JSON.stringify(t)})'>⭐</span></div>`}).join('')+`<p class="hint" style="margin-top:8px">Định dạng: ${$('iFmt').value}. Chọn ý có “khoảng trống tò mò” rõ nhất.</p>`}
-function saveIdea(t){D.ideas.push({t,d:new Date().toLocaleDateString('vi-VN'),s:'Ý tưởng'});save();renderIdeas();toast('Đã lưu ⭐')}
-const ST=['Ý tưởng','Đang viết','Đã làm','Đã đăng'];
-function renderIdeas(){if(!D.ideas.length){$('ideaBank').innerHTML='<p class="hint">Bấm ⭐ để lưu ý tưởng.</p>';return}
- $('ideaBank').innerHTML=D.ideas.map((x,i)=>`<div class="item"><span class="x" onclick="D.ideas.splice(${i},1);save();renderIdeas()">✕</span>${x.t}<br>
- <select style="margin-top:6px;padding:6px;font-size:12px;width:auto" onchange="D.ideas[${i}].s=this.value;save()">${ST.map(s=>`<option ${s==x.s?'selected':''}>${s}</option>`).join('')}</select>
- <button class="sec" style="padding:6px 10px;font-size:12px" onclick="useIdea(${i})">→ Viết kịch bản</button></div>`).join('')}
-function useIdea(i){$('sTitle').value=D.ideas[i].t;document.querySelector('[data-t=t4]').click()}
-
-/* 4. SCRIPT */
-function genScript(){const t=$('sTitle').value||'[Tiêu đề]',L=+$('sLen').value,s=$('sStruct').value;
- const sec=(pct)=>Math.max(2,Math.round(L*pct))+'s';
- const S={loop:[['HOOK',.1,`Đặt câu hỏi gây tò mò: "${t}"\n→ Hứa hẹn: "Bí mật thứ 3 mới là điều quan trọng nhất."`],['BÍ MẬT 1',.2,'Sự thật dễ hiểu nhất + ví dụ đời thường.'],['BÍ MẬT 2',.25,'Đào sâu hơn, đưa số liệu / thí nghiệm / câu chuyện.'],['BÍ MẬT 3 – TWIST',.3,'Lật ngược điều khán giả vừa tin.'],['CHỐT + CTA',.15,'Câu kết đáng lưu + "Lưu lại / theo dõi để xem phần tiếp theo."']],
- pas:[['HOOK – VẤN ĐỀ',.15,`Gọi tên nỗi đau: "${t}"`],['KHUẤY ĐỘNG',.3,'Hậu quả nếu cứ để vậy; tình huống quen thuộc khiến khán giả gật đầu.'],['GIẢI PHÁP',.4,'2–3 bước cụ thể, mỗi bước 1 ví dụ.'],['CTA',.15,'"Bạn đang ở bước nào? Bình luận số 1, 2 hoặc 3."']],
- story:[['HOOK',.1,`Mở bằng khoảnh khắc căng nhất: "${t}"`],['BỐI CẢNH',.2,'Ai, ở đâu, khi nào – chỉ chi tiết cần thiết.'],['XUNG ĐỘT',.35,'Khó khăn leo thang, giữ nhịp bằng câu hỏi "rồi chuyện gì xảy ra?".'],['BƯỚC NGOẶT',.2,'Điều bất ngờ thay đổi tất cả.'],['BÀI HỌC + CTA',.15,'1 câu bài học dễ chia sẻ.']],
- list:[['HOOK',.1,`"${t}" – số 1 sẽ khiến bạn bất ngờ.`],['MỤC 3/5',.25,'Mục nhẹ nhất trước.'],['MỤC 2/4',.25,'Mục mạnh hơn.'],['MỤC 1',.25,'Mục mạnh nhất, giữ đến cuối.'],['CTA',.15,'"Bạn biết mục nào trước đó? Bình luận nhé."']],
- myth:[['HOOK',.1,`"Bạn nghĩ... nhưng thực ra: ${t}"`],['LẦM TƯỞNG',.25,'Nêu niềm tin phổ biến, cho khán giả thấy mình cũng từng nghĩ vậy.'],['SỰ THẬT',.35,'Bằng chứng: nghiên cứu, số liệu, ví dụ.'],['ÁP DỤNG',.2,'Biết điều này rồi thì nên làm gì?'],['CTA',.1,'"Gửi cho người vẫn còn tin điều đó."']]}[s];
- $('scriptOut').textContent=`🎬 ${t}\n⏱ ${L>=60?L/60+' phút':L+' giây'} • ~${Math.round(L*2.5)} từ lời đọc\n\n`+S.map(([h,p,c],i)=>`[${i+1}] ${h} (${sec(p)})\n${c}\n🖼 Cảnh: ...\n`).join('\n')+
- `\n✅ Tự kiểm: hook ≤ 3 giây? mỗi câu ≤ 15 từ? có lý do để xem đến cuối? có 1 câu đáng lưu/chia sẻ?`}
-
-/* 5. VISUAL */
-function saveBible(){D.bible={style:$('vStyle').value,color:$('vColor').value,char:$('vChar').value,ratio:$('vRatio').value};save();toast('Đã khóa Visual Bible')}
-function loadBible(){if(!D.bible)return;$('vStyle').value=D.bible.style;$('vColor').value=D.bible.color;$('vChar').value=D.bible.char;$('vRatio').value=D.bible.ratio}
-function genPrompt(){const b=D.bible||{style:$('vStyle').value,color:$('vColor').value,char:$('vChar').value,ratio:$('vRatio').value};
- $('promptOut').textContent=`${b.style}, ${$('vShot').value}, ${$('vScene').value||'[mô tả cảnh]'}.\n`+
- (b.char?`CHARACTER LOCK: ${b.char} — same face, hair, outfit as previous scenes.\n`:'')+
- `COLOR & LIGHT: ${b.color}.\nFRAME: ${b.ratio}, clear negative space at top/bottom for text overlay.\nQUALITY: sharp focus on subject, natural skin texture, realistic proportions, coherent lighting.\n\nNEGATIVE: no text, no letters, no watermark, no logo, no extra fingers, no deformed hands, no duplicate characters, no distorted face, no modern objects out of era, no oversaturation, no blur on main subject.`}
-
-/* 6. POST & KPI */
-function genCaption(){const lines=$('cMain').value.split('\n').filter(Boolean),tags=$('cTags').value.split(',').map(s=>s.trim().replace(/^#/,'')).filter(Boolean).slice(0,5);
- $('capOut').textContent=lines.join('\n⠀\n')+'\n⠀\n'+tags.map(t=>'#'+t.replace(/\s+/g,'')).join(' ')}
-function diagnose(k){const r=[];
- if(k.r!==''&&+k.r<30)r.push('🔴 Retention thấp → hook yếu hoặc 3 giây đầu chưa nêu lợi ích. Thử mở bằng câu hỏi/khoảnh khắc mạnh nhất.');
- else if(+k.r>=50)r.push('🟢 Retention tốt → nội dung giữ chân được, làm thêm phiên bản cùng chủ đề.');
- if(k.c!==''&&+k.c<4)r.push('🔴 CTR thấp → đổi thumbnail/tiêu đề, tăng tương phản và tò mò.');
- if(k.l!==''&&+k.l<3)r.push('🟡 Like thấp → thiếu cảm xúc/đồng cảm; thêm câu chạm nỗi đau.');
- if(k.v&&k.s/k.v>0.01)r.push('🟢 Share+Save cao → nội dung có giá trị lưu, ưu tiên định dạng này.');
- return r.length?r.join('\n'):'Cần thêm số liệu để chẩn đoán.'}
-function addKpi(){const k={n:$('kName').value||'Video '+(D.kpi.length+1),v:+$('kV').value||0,r:$('kR').value,l:$('kL').value,s:+$('kS').value||0,c:$('kC').value};D.kpi.unshift(k);save();renderKpi()}
-function renderKpi(){$('kpiOut').innerHTML=D.kpi.map((k,i)=>`<div class="item"><span class="x" onclick="D.kpi.splice(${i},1);save();renderKpi()">✕</span><b>${k.n}</b> • ${k.v.toLocaleString()} view<div class="out" style="margin-top:6px">${diagnose(k)}</div></div>`).join('')}
-
-/* 7. PROJECT */
-const ROAD=['Tuần 1: Hoàn thành checklist thị trường + chấm 5 ngách','Tuần 1: Chọn 1 ngách, khóa Visual Bible & tên kênh','Tuần 2: Lưu 30 ý tưởng, viết 7 kịch bản','Tuần 2: Đăng 7 bài đầu (không cần hoàn hảo)','Tuần 3: Đăng đều mỗi ngày, ghi số liệu mọi bài','Tuần 3: Tìm 2 bài tốt nhất → làm 5 biến thể','Tuần 4: Chẩn đoán số liệu, bỏ định dạng yếu','Tuần 4: Quyết định: tiếp tục / xoay góc / đổi ngách'];
-function renderRoad(){$('roadmap').innerHTML=ROAD.map((r,i)=>`<label class="chk"><input type="checkbox" ${D.road[i]?'checked':''} onchange="D.road[${i}]=this.checked;save();renderRoad()"><span>${r}</span></label>`).join('');
- $('bar').innerHTML=ROAD.map((_,i)=>`<span class="${D.road[i]?'d':''}"></span>`).join('')}
-function exportData(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,1)],{type:'application/json'}));a.download='creator-compass-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
-function importData(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{D=JSON.parse(e.target.result);save();init();toast('Đã nhập')}catch{alert('File không hợp lệ')}};r.readAsText(f)}
-function resetAll(){if(confirm('Xóa toàn bộ dữ liệu? Nên xuất JSON trước.')){localStorage.removeItem(KEY);location.reload()}}
-function usage(){const kb=(JSON.stringify(D).length/1024).toFixed(1);if($('usage'))$('usage').textContent=`Dung lượng đang dùng: ${kb} KB / ~5000 KB`}
-function copyEl(id){navigator.clipboard.writeText($(id).textContent).then(()=>toast('Đã copy'))}
-
-function init(){D.res=D.res||{};D.niches=D.niches||[];D.ideas=D.ideas||[];D.kpi=D.kpi||[];D.road=D.road||{};
- if(D.market){$('mkt').value=D.market.mkt;$('plat').value=D.market.plat;$('goal').value=D.market.goal}
- renderRes();renderNicheForm();renderNiches();renderIdeas();loadBible();renderKpi();renderRoad();usage()}
-init();
+ if($('s').classList.contains('on'))saveSet();
+ document.querySelectorAll('nav button,.tab').forEach(x=>x.classList.remove('on'));
+ b.classList.add('on');$(b.dataset.t).classList.add('on');renderCats();renderLib();renderFlow();scrollTo(0,0)});
+$('preset').innerHTML+=Object.keys(PRESETS).map(p=>`<option>${p}</option>`).join('');
+loadSet();renderCats();renderLib();renderFlow();
 </script>
 </body>
+</html>
