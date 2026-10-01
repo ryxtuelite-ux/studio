@@ -4,298 +4,310 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#14112b">
-<title>Prompt Kit – Làm content nhanh</title>
+<title>Content Pipeline – Quy trình nối chuỗi</title>
 <style>
-:root{--bg:#0f0d22;--card:#1b1838;--c2:#25214a;--t:#ecebff;--m:#9d98c9;--a:#ffc94a;--p:#7c6cff;--ok:#4ade80}
+:root{--bg:#0f0d22;--card:#1b1838;--c2:#25214a;--t:#ecebff;--m:#9d98c9;--a:#ffc94a;--p:#7c6cff;--ok:#4ade80;--bad:#f87171}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:system-ui,-apple-system,Roboto,sans-serif;background:var(--bg);color:var(--t);font-size:15px;padding-bottom:80px}
-header{position:sticky;top:0;z-index:5;background:#1a1640;padding:10px 12px;border-bottom:1px solid #2e2960}
+body{font-family:system-ui,-apple-system,Roboto,sans-serif;background:var(--bg);color:var(--t);font-size:15px;padding-bottom:90px}
+header{position:sticky;top:0;z-index:5;background:#1a1640;padding:10px 12px 8px;border-bottom:1px solid #2e2960}
+header .top{display:flex;justify-content:space-between;align-items:center}
 header h1{font-size:16px}header small{color:var(--m);font-size:12px}
+.prog{display:flex;gap:3px;margin-top:8px;overflow-x:auto}
+.prog div{flex:1;min-width:26px;height:26px;border-radius:7px;background:#2a2655;display:grid;place-items:center;font-size:11px;color:var(--m)}
+.prog div.done{background:#1f5136;color:#bff5d3}.prog div.cur{background:var(--a);color:#1a1300;font-weight:700}.prog div.skip{opacity:.3}
 main{padding:10px}
 .card{background:var(--card);border-radius:14px;padding:12px;margin-bottom:10px}
-.card h2{font-size:15px;color:var(--a);margin-bottom:6px}
-label{display:block;font-size:12px;color:var(--m);margin:7px 0 3px}
+.card h2{font-size:16px;color:var(--a);margin-bottom:4px}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;background:var(--c2);color:var(--m);margin-right:4px}
+.tag.pj{background:#3b2a6b;color:#d9ccff}.tag.ps{background:#123a4a;color:#bde9ff}
+label{display:block;font-size:12px;color:var(--m);margin:8px 0 3px}
 input,select,textarea{width:100%;background:var(--c2);color:var(--t);border:1px solid #3a3470;border-radius:10px;padding:9px;font-size:15px;font-family:inherit}
-textarea{min-height:70px}
+textarea{min-height:120px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-button{background:var(--p);color:#fff;border:0;border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600}
-.sec{background:var(--c2);border:1px solid #3a3470}
-.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px}
-.chips button{flex:none;background:var(--c2);font-size:13px;padding:7px 12px;border-radius:20px;font-weight:500}
-.chips button.on{background:var(--a);color:#1a1300}
-.tp{background:var(--card);border-radius:12px;padding:11px;margin-bottom:8px}
-.tp .h{display:flex;justify-content:space-between;align-items:center;gap:6px}
-.tp b{font-size:14px}.tp .d{color:var(--m);font-size:12.5px;margin-top:3px}
-.tp .acts{display:flex;gap:6px;margin-top:8px}
-.tp .acts button{flex:1;padding:8px;font-size:13px}
-.star{background:none;font-size:18px;padding:0 4px;color:var(--m)}.star.on{color:var(--a)}
-.out{background:#0b0a1a;border:1px dashed #3a3470;border-radius:10px;padding:10px;white-space:pre-wrap;font-size:13px;line-height:1.5;margin-top:8px;max-height:55vh;overflow:auto}
-nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#17143a;border-top:1px solid #2e2960;z-index:9}
-nav button{flex:1;background:none;border-radius:0;padding:8px 2px 10px;font-size:11px;color:var(--m);font-weight:500}
-nav button i{display:block;font-style:normal;font-size:19px}nav button.on{color:var(--a)}
-.tab{display:none}.tab.on{display:block}
-.toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);background:var(--ok);color:#042;padding:8px 16px;border-radius:20px;font-weight:700;display:none;z-index:20}
-.hint{color:var(--m);font-size:12.5px;line-height:1.45}
-.step{display:flex;gap:8px;align-items:center;background:var(--c2);border-radius:10px;padding:9px;margin-top:6px;font-size:13.5px}
-.step span{background:var(--a);color:#1a1300;border-radius:50%;width:22px;height:22px;display:grid;place-items:center;font-weight:700;flex:none;font-size:12px}
-.step button{margin-left:auto;padding:6px 10px;font-size:12px}
+button{background:var(--p);color:#fff;border:0;border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600}
+.sec{background:var(--c2);border:1px solid #3a3470}.ok{background:#15803d}.warn{background:#7f1d1d}
+.out{background:#0b0a1a;border:1px dashed #3a3470;border-radius:10px;padding:10px;white-space:pre-wrap;font-size:12.5px;line-height:1.5;max-height:38vh;overflow:auto;margin-top:6px}
+.hint{color:var(--m);font-size:12.5px;line-height:1.45;margin-top:4px}
+.flowbox{background:#16133a;border-left:3px solid var(--a);border-radius:8px;padding:8px 10px;margin:8px 0;font-size:12.5px;color:var(--m)}
+.flowbox b{color:var(--t)}
+.row{display:flex;gap:8px;margin-top:8px}.row>*{flex:1}
+.opts{margin-top:8px}.opt{background:var(--c2);border:1px solid #3a3470;border-radius:10px;padding:9px;margin-top:6px;font-size:13.5px}
+.opt.on{border-color:var(--a);background:#3a3010}
+.bot{position:fixed;bottom:0;left:0;right:0;background:#17143a;border-top:1px solid #2e2960;padding:8px 10px;display:flex;gap:8px;z-index:9}
+.bot button{flex:1}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--ok);color:#042;padding:8px 16px;border-radius:20px;font-weight:700;display:none;z-index:20}
+.miss{color:var(--bad);font-size:12.5px;margin-top:6px}
+.lesson{background:#1d2b1f;border-radius:8px;padding:8px;font-size:12.5px;margin-top:6px;white-space:pre-wrap}
+dialog{background:var(--card);color:var(--t);border:1px solid #3a3470;border-radius:14px;padding:14px;width:92%;max-width:480px}
+dialog::backdrop{background:#000a}
 </style>
 </head>
 <body>
-<header><h1>⚡ Prompt Kit</h1><small>Điền 1 lần → copy prompt dán vào Copilot / ChatGPT / Flow</small></header>
-<main>
-
-<!-- SETUP -->
-<section class="tab on" id="s">
- <div class="card"><h2>① Thông số dự án</h2>
-  <p class="hint">Chỉ điền một lần. Mọi template tự lấy các giá trị này.</p>
-  <label>Chủ đề / ngách</label>
-  <select id="preset" onchange="applyPreset()"><option value="">— chọn nhanh ngách gợi ý —</option></select>
-  <input id="niche" placeholder="vd: tâm lý học hành vi" style="margin-top:6px">
-  <div class="g2">
-   <div><label>Nền tảng</label><select id="plat"><option>TikTok</option><option>YouTube Shorts</option><option>YouTube dài</option><option>Facebook Reels</option><option>Instagram Reels</option></select></div>
-   <div><label>Ngôn ngữ video</label><select id="lang"><option>Tiếng Việt</option><option>Português do Brasil</option><option>English (US)</option><option>Español (LatAm)</option><option>Bahasa Indonesia</option></select></div>
-   <div><label>Định dạng</label><select id="fmt"><option>1 slide ảnh</option><option>Carousel 5–7 slide</option><option>Video ngắn 30–60s</option><option>Video dài 8–12 phút</option></select></div>
-   <div><label>Giọng điệu</label><select id="tone"><option>sâu lắng, đồng cảm</option><option>bí ẩn, hồi hộp</option><option>hài hước, gần gũi</option><option>chuyên gia, rõ ràng</option><option>truyền cảm hứng mạnh</option></select></div>
-  </div>
-  <label>Khán giả mục tiêu</label><input id="aud" placeholder="vd: người trẻ 18–30 đang đi làm">
-  <label>Phong cách hình ảnh</label><select id="vis"><option>cinematic photorealistic, moody</option><option>minimal clean flat illustration</option><option>soft anime watercolor</option><option>3D stylized Pixar-like</option><option>vintage 35mm film photo</option><option>dark fantasy painterly</option></select>
-  <label>Màu chủ đạo</label><input id="col" value="deep blue-purple shadows with warm golden accent light">
-  <label>Nhân vật cố định (tiếng Anh, để trống nếu không cần)</label><input id="chr" placeholder="vd: Vietnamese woman ~25, shoulder-length black hair, beige coat">
-  <label>Ý tưởng / tiêu đề bài đang làm</label><input id="topic" placeholder="vd: Tại sao càng mệt càng khó ngủ?">
-  <label>Ghi chú thêm (nội dung, kịch bản, số liệu…)</label><textarea id="note" placeholder="Dán kịch bản hoặc thông tin vào đây để template dùng"></textarea>
-  <button style="width:100%;margin-top:10px" onclick="saveSet();go('l')">Lưu & mở thư viện →</button>
- </div>
-</section>
-
-<!-- LIBRARY -->
-<section class="tab" id="l">
- <input id="q" placeholder="🔍 Tìm template..." oninput="renderLib()">
- <div class="chips" id="cats"></div>
- <div id="lib"></div>
-</section>
-
-<!-- FLOW -->
-<section class="tab" id="f">
- <div class="card"><h2>⚡ Quy trình 1 bài trong ~20 phút</h2>
-  <p class="hint">Làm lần lượt từ trên xuống. Copy prompt, dán vào AI, dán kết quả vào ô “Ghi chú” ở tab Thiết lập rồi làm bước tiếp theo.</p>
-  <div id="flow"></div>
- </div>
-</section>
-
-<!-- MINE -->
-<section class="tab" id="m">
- <div class="card"><h2>➕ Thêm template của bạn</h2>
-  <p class="hint">Có thể dùng biến: {niche} {plat} {lang} {fmt} {tone} {aud} {vis} {col} {chr} {topic} {note}</p>
-  <label>Tên</label><input id="nT">
-  <label>Nội dung prompt</label><textarea id="nP" style="min-height:120px"></textarea>
-  <button style="margin-top:8px" onclick="addMine()">Lưu template</button>
- </div>
- <div class="card"><h2>Sao lưu</h2>
-  <button onclick="exp()">⬇ Xuất JSON</button> <button class="sec" onclick="$('imp').click()">⬆ Nhập</button>
-  <input type="file" id="imp" accept=".json" hidden onchange="imp(this)">
- </div>
-</section>
-</main>
-
-<nav>
- <button class="on" data-t="s"><i>⚙️</i>Thiết lập</button>
- <button data-t="l"><i>📚</i>Thư viện</button>
- <button data-t="f"><i>⚡</i>Quy trình</button>
- <button data-t="m"><i>✍️</i>Của tôi</button>
-</nav>
+<header>
+ <div class="top"><div><h1>🔗 Content Pipeline</h1><small id="sub">Mỗi bước tự lấy kết quả của bước trước</small></div>
+ <button class="sec" style="padding:7px 10px" onclick="$('menu').showModal()">☰</button></div>
+ <div class="prog" id="prog"></div>
+</header>
+<main id="main"></main>
+<div class="bot"><button class="sec" id="bBack" onclick="move(-1)">← Trước</button><button id="bNext" onclick="move(1)">Tiếp →</button></div>
 <div class="toast" id="toast"></div>
+
+<dialog id="menu">
+ <h2 style="color:var(--a);font-size:16px;margin-bottom:8px">Dự án</h2>
+ <p class="hint" id="stat"></p>
+ <button class="ok" style="width:100%;margin-top:10px" onclick="newPost()">➕ Bài mới (giữ nghiên cứu, Visual Bible, bài học)</button>
+ <button class="sec" style="width:100%;margin-top:8px" onclick="exp()">⬇ Xuất JSON</button>
+ <button class="sec" style="width:100%;margin-top:8px" onclick="$('imp').click()">⬆ Nhập JSON</button>
+ <input type="file" id="imp" accept=".json" hidden onchange="imp(this)">
+ <button class="warn" style="width:100%;margin-top:8px" onclick="if(confirm('Xóa toàn bộ dự án?')){localStorage.removeItem(K);location.reload()}">🗑 Dự án mới (xóa hết)</button>
+ <button class="sec" style="width:100%;margin-top:8px" onclick="$('menu').close()">Đóng</button>
+</dialog>
 
 <script>
 const $=id=>document.getElementById(id);
-const K='promptKit_v1';
-let S=JSON.parse(localStorage.getItem(K)||'{}');S.fav=S.fav||[];S.mine=S.mine||[];S.v=S.v||{};
-const F=['niche','plat','lang','fmt','tone','aud','vis','col','chr','topic','note'];
-const store=()=>localStorage.setItem(K,JSON.stringify(S));
-const toast=m=>{$('toast').textContent=m;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',1400)};
+const K='pipeline_v1';
+let P=JSON.parse(localStorage.getItem(K)||'null')||{cur:0,s:{},out:{},pick:{},lessons:[],history:[]};
+const save=()=>localStorage.setItem(K,JSON.stringify(P));
+const toast=m=>{$('toast').textContent=m;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',1500)};
+const isVideo=()=>/Video/.test(P.s.fmt||'');
+const isLong=()=>/dài/.test(P.s.fmt||'');
+const ratio=()=>isLong()?'16:9 horizontal':'9:16 vertical';
+const O=id=>(P.out[id]||'').trim();
+const lessons=()=>P.lessons.length?`\nBÀI HỌC TỪ CÁC BÀI TRƯỚC (bắt buộc áp dụng):\n${P.lessons.slice(-3).join('\n---\n')}\n`:'';
+const ctx=()=>`Ngách: ${P.s.niche}\nNền tảng: ${P.s.plat}\nThị trường/ngôn ngữ: ${P.s.lang}\nKhán giả: ${P.s.aud}\nGiọng điệu: ${P.s.tone}\nĐịnh dạng: ${P.s.fmt}`;
 
-const PRESETS={
-'Tâm lý – cảm xúc':['tâm lý học & cảm xúc đời thường','người trẻ 18–30 hay overthinking, áp lực công việc','sâu lắng, đồng cảm'],
-'Tài chính cá nhân':['tài chính cá nhân cho người mới đi làm','người 22–35 thu nhập trung bình','chuyên gia, rõ ràng'],
-'Bí ẩn – truyền thuyết':['truyền thuyết, bí ẩn chưa có lời giải','người lớn thích chuyện kỳ bí','bí ẩn, hồi hộp'],
-'Lịch sử ít người biết':['sự thật lịch sử ít người biết','người tò mò 18–45','bí ẩn, hồi hộp'],
-'Khoa học tò mò':['khoa học đời sống & cơ thể người','học sinh, sinh viên, người tò mò','hài hước, gần gũi'],
-'Phát triển bản thân':['tư duy & thói quen thành công','người trẻ muốn thay đổi bản thân','truyền cảm hứng mạnh'],
-'Tình cảm – mối quan hệ':['tình yêu, chia tay, mối quan hệ','người 18–30','sâu lắng, đồng cảm'],
-'AI & công nghệ':['mẹo dùng AI & công nghệ cho công việc','dân văn phòng','chuyên gia, rõ ràng'],
-'Mẹo sống – gia đình':['mẹo sống, mẹo nhà cửa tiết kiệm','người nội trợ, gia đình trẻ','hài hước, gần gũi'],
-'Sức khỏe – giấc ngủ':['sức khỏe, giấc ngủ, năng lượng (không thay lời khuyên y tế)','dân văn phòng hay mệt mỏi','chuyên gia, rõ ràng'],
-'Kỹ thuật nhà máy':['giải thích quy trình sản xuất & kỹ thuật dễ hiểu','kỹ sư trẻ, sinh viên kỹ thuật','chuyên gia, rõ ràng'],
-'Tóm tắt sách':['tóm tắt bài học từ sách nổi tiếng','người bận rộn thích học nhanh','truyền cảm hứng mạnh']};
+/* ============ PIPELINE ============ */
+const STEPS=[
+{id:'setup',n:'Thiết lập',sc:'pj',setup:true},
 
-/* ===== TEMPLATE LIBRARY ===== */
-const T=[
-// NGHIÊN CỨU
-['🔎 Nghiên cứu','Phân tích ngách toàn diện','Đánh giá ngách có nên làm không',
-`Đóng vai chuyên gia chiến lược nội dung {plat}. Phân tích ngách "{niche}" cho khán giả {aud}, ngôn ngữ {lang}.
-Trả lời theo bảng:
-1. Nhu cầu: khán giả đang tìm gì, nỗi đau và mong muốn chính (5 ý).
-2. Mức cạnh tranh: kiểu kênh đang thống trị, khoảng trống còn bỏ ngỏ.
-3. Cách kiếm tiền phù hợp (quảng cáo, affiliate, sản phẩm số…).
-4. Rủi ro chính sách & bản quyền.
-5. 3 góc nhìn khác biệt để một kênh mới nổi bật.
-6. Chấm điểm 1–10 cho: nhu cầu, cạnh tranh, kiếm tiền, độ dễ sản xuất bằng AI. Kết luận: NÊN / CÂN NHẮC / KHÔNG NÊN.`],
-['🔎 Nghiên cứu','So sánh 5 ngách','Chọn ngách tốt nhất khi còn phân vân',
-`Tôi đang phân vân giữa các ngách sau trên {plat} (ngôn ngữ {lang}): {note}
-Hãy so sánh trong một bảng: nhu cầu, cạnh tranh, RPM/kiếm tiền, độ dễ sản xuất bằng AI, độ bền (evergreen), tốc độ tăng follow. Chấm thang 10, tính tổng điểm và đề xuất 1 ngách kèm lý do. Nếu thông tin chưa chắc, ghi rõ là ước tính.`],
-['🔎 Nghiên cứu','Chân dung khán giả','Hiểu sâu người xem',
-`Xây dựng chân dung khán giả cho kênh "{niche}" trên {plat}, nhóm {aud}.
-Gồm: độ tuổi, hoàn cảnh, 1 ngày điển hình, 7 nỗi đau, 5 mong muốn thầm kín, 10 câu họ hay tự hỏi, từ ngữ họ hay dùng, lý do họ lưu/chia sẻ bài. Viết bằng {lang}.`],
-['🔎 Nghiên cứu','Mổ xẻ video đối thủ','Học từ video viral',
-`Phân tích video/bài viral sau (nội dung hoặc mô tả): {note}
-Chỉ ra: hook 3 giây đầu, cấu trúc, cảm xúc chính, lý do người xem lưu/chia sẻ, điểm yếu có thể làm tốt hơn. Sau đó đề xuất 3 phiên bản của tôi cho ngách "{niche}" với góc nhìn khác, không sao chép.`],
-['🔎 Nghiên cứu','Trend & mùa vụ tháng này','Bắt sóng nội dung nóng',
-`Hôm nay là {date}. Gợi ý 10 chủ đề cho ngách "{niche}" trên {plat} gắn với: thời tiết/mùa hiện tại, ngày lễ sắp tới, sự kiện tâm lý theo mùa (thi cử, cuối năm, lương thưởng…). Mỗi chủ đề có: hook, lý do phù hợp thời điểm, ngày đăng gợi ý.`],
+{id:'research',n:'Nghiên cứu ngách',sc:'pj',need:['setup'],
+ info:'Lấy từ: Thiết lập → Kết quả dùng cho: Ý tưởng, Visual Bible',
+ p:()=>`Đóng vai chuyên gia chiến lược nội dung ${P.s.plat}.
+${ctx()}
 
-// Ý TƯỞNG
-['💡 Ý tưởng','30 ý tưởng theo cụm','Kho ý tưởng cho 1 tháng',
-`Tạo 30 ý tưởng {fmt} cho kênh "{niche}" trên {plat}, khán giả {aud}, giọng {tone}, ngôn ngữ {lang}.
-Chia 5 cụm: Sự thật bất ngờ / Nỗi đau quen thuộc / Câu chuyện / Mẹo áp dụng ngay / Tranh luận.
-Mỗi ý: tiêu đề hook (≤12 từ) + 1 câu mô tả + điểm tiềm năng viral 1–10. Sắp xếp theo điểm giảm dần.`],
-['💡 Ý tưởng','10 hook cho 1 chủ đề','Tối ưu 3 giây đầu',
-`Viết 10 hook cho chủ đề "{topic}" (ngách {niche}, {plat}, {lang}, giọng {tone}).
-Dùng 10 kiểu khác nhau: câu hỏi "Tại sao", phủ định, con số, bí mật, cảnh báo, so sánh, thử thách, câu chuyện, gọi tên người xem, khoảng trống tò mò. Mỗi hook ≤ 12 từ. Đánh dấu 3 hook mạnh nhất.`],
-['💡 Ý tưởng','Biến 1 bài thắng thành 10','Nhân bản bài đang lên',
-`Bài sau đang có kết quả tốt: "{topic}". Phân tích vì sao nó hiệu quả, rồi tạo 10 biến thể giữ nguyên "công thức thắng" nhưng đổi: góc nhìn, đối tượng, tình huống, định dạng. Ngách {niche}, {plat}, {lang}.`],
-['💡 Ý tưởng','Series nhiều phần','Giữ người xem quay lại',
-`Thiết kế 1 series 7 phần về "{topic}" cho {plat}. Mỗi phần: tiêu đề, nội dung chính, cliffhanger cuối phần dẫn sang phần sau. Ngôn ngữ {lang}, giọng {tone}.`],
+Phân tích ngách này, trình bày gọn:
+1. 7 nỗi đau và 5 mong muốn của khán giả.
+2. Kiểu nội dung đang thống trị và khoảng trống còn bỏ ngỏ.
+3. 5 cụm nội dung chính (content pillars) nên làm.
+4. 3 góc nhìn khác biệt giúp kênh mới nổi bật.
+5. Từ ngữ, cách nói khán giả hay dùng.
+6. Rủi ro chính sách/bản quyền cần tránh.
+7. Kết luận 1 câu: định vị kênh.`},
 
-// NỘI DUNG / KỊCH BẢN
-['📝 Nội dung','1 slide trích dẫn','Ảnh 1 câu dễ lưu, dễ chia sẻ',
-`Viết 5 phương án nội dung cho 1 slide ảnh {plat} chủ đề "{topic}", ngách {niche}, giọng {tone}, {lang}.
-Mỗi phương án: tiêu đề nhỏ (≤5 từ) + câu chính (≤20 từ, đọc là thấy mình trong đó) + 1 từ khóa cần tô màu nhấn + caption 2–3 dòng. Tránh sáo rỗng, ưu tiên cảm giác "đúng quá, phải lưu lại".`],
-['📝 Nội dung','Carousel chuỗi tò mò','5–7 slide giữ người lướt',
-`Viết carousel 7 slide cho {plat} chủ đề "{topic}", ngách {niche}, {lang}, giọng {tone}.
-Slide 1: hook dạng "Tại sao…?" + câu treo.
-Slide 2–6: mỗi slide 1 ý, ≤25 từ, nhãn (SỰ THẬT / BÍ MẬT / SAI LẦM / CÁCH LÀM), cuối mỗi slide có câu treo dẫn sang slide sau.
-Slide 7: kết luận đáng lưu + CTA.
-Kèm 1 dòng mô tả hình ảnh cho từng slide (tiếng Anh).`],
-['📝 Nội dung','Kịch bản video ngắn','30–60s có phân cảnh',
-`Viết kịch bản {fmt} cho {plat}: "{topic}". Ngách {niche}, khán giả {aud}, giọng {tone}, lời thoại bằng {lang}.
-Trình bày dạng bảng: Cảnh | Thời gian | Lời đọc (VO) | Chữ trên màn hình | Mô tả hình ảnh (tiếng Anh).
-Yêu cầu: hook ≤3 giây, mỗi câu ≤15 từ, có 1 câu twist ở 70% thời lượng, kết bằng câu đáng chia sẻ + CTA nhẹ.`],
-['📝 Nội dung','Kịch bản video dài','8–12 phút cho YouTube',
-`Viết kịch bản YouTube 10 phút: "{topic}", ngách {niche}, {lang}, giọng {tone}.
-Cấu trúc: Cold open 30s → Intro hứa hẹn → 4 chương (mỗi chương có mini-hook, nội dung, chuyển cảnh) → Cao trào → Kết + CTA.
-Chia đoạn đánh số SHOT 1, 2, 3… mỗi shot 1–3 câu VO kèm mô tả hình ảnh tiếng Anh. Khoảng 1.400 từ.`],
-['📝 Nội dung','Kể chuyện cảm xúc','Câu chuyện chạm người xem',
-`Viết một câu chuyện ngắn (150–200 từ, {lang}) về "{topic}" cho khán giả {aud}. Có nhân vật cụ thể, khoảnh khắc đời thường, 1 chi tiết nhỏ gây xúc động, kết bằng 1 câu bài học không giáo điều. Giọng {tone}.`],
-['📝 Nội dung','Biên tập lại kịch bản','Làm ngắn, mạnh, tự nhiên',
-`Biên tập lại nội dung sau cho {plat}, {lang}: 
-{note}
-Yêu cầu: cắt 30% chữ thừa, hook mạnh hơn, câu ngắn, nhịp đọc tự nhiên, giữ nguyên ý chính. Liệt kê ngắn những gì đã sửa.`],
-['📝 Nội dung','Kiểm tra sự thật','Tránh sai thông tin',
-`Kiểm tra độ chính xác của nội dung sau, đánh dấu từng nhận định là ĐÚNG / CẦN SỬA / KHÔNG KIỂM CHỨNG ĐƯỢC, giải thích ngắn và đề xuất cách viết an toàn hơn:
-{note}`],
+{id:'ideas',n:'Ý tưởng',sc:'ps',need:['research'],pick:'idea',
+ info:'Lấy từ: Nghiên cứu + Bài học cũ → Chọn 1 ý tưởng để dùng cho bước sau',
+ p:()=>`${ctx()}
 
-// HÌNH ẢNH
-['🎨 Hình ảnh','Visual Bible','Khóa phong cách cho cả series',
-`Tạo Visual Bible cho series "{niche}" trên {plat}. Phong cách: {vis}. Màu: {col}. Nhân vật: {chr}.
-Gồm: bảng màu (mã HEX), ánh sáng, góc máy hay dùng, bối cảnh lặp lại, mô tả nhân vật chi tiết bằng tiếng Anh (khuôn mặt, tóc, trang phục cố định), font & bố cục chữ, danh sách những điều KHÔNG được xuất hiện. Viết thành một khối "CONTINUITY LOCK" để dán vào mọi prompt ảnh.`],
-['🎨 Hình ảnh','Prompt ảnh 1 cảnh','Dán vào Copilot / Flow / Midjourney',
-`{vis}, {topic}. 
-Scene: {note}
-Character lock: {chr}, same face, hair and outfit in every image.
-Lighting & color: {col}.
-Composition: {ratio}, subject clearly readable, empty negative space at top third for text overlay.
-Quality: sharp focus, realistic proportions, natural textures, coherent shadows.
-Negative: no text, no letters, no watermark, no logo, no extra fingers, no deformed hands, no duplicate people, no distorted face, no cluttered background, no oversaturated colors.`],
-['🎨 Hình ảnh','Prompt ảnh hàng loạt từ kịch bản','Ra prompt cho mọi cảnh',
-`Từ kịch bản dưới đây, tạo prompt ảnh tiếng Anh cho TỪNG cảnh.
-Mỗi prompt gồm: style ({vis}), shot type, mô tả cảnh, character lock ({chr}), lighting ({col}), tỉ lệ {ratio}, và dòng Negative chống lỗi (no text, no watermark, no extra fingers, no deformed face, no duplicate characters, no modern objects nếu bối cảnh cổ).
-Giữ continuity giữa các cảnh. Đánh số trùng với số cảnh.
-Kịch bản:
-{note}`],
-['🎨 Hình ảnh','Ảnh slide có chữ','Ảnh TikTok kèm text',
-`Tạo ảnh {ratio} cho {plat}: {vis}, {col}. Hình ảnh minh họa đúng ý "{topic}"{chrx}.
-Bố cục: nhân vật/vật thể ở 2/3 dưới, khoảng trống tối phía trên cho chữ.
-Chữ ({lang}, lớn, đậm, căn giữa, chính tả chính xác): "{note}" — tô màu vàng cho từ khóa quan trọng.
-Không thêm bất kỳ chữ nào khác, không chữ nhỏ trên sách, giấy, bảng hiệu; không watermark.`],
-['🎨 Hình ảnh','Thumbnail YouTube','CTR cao',
-`Đề xuất 3 concept thumbnail cho video "{topic}" (ngách {niche}). Mỗi concept: chủ thể chính, biểu cảm, đạo cụ, chữ trên thumbnail (≤4 từ, {lang}), màu tương phản, và prompt ảnh tiếng Anh 16:9 theo phong cách {vis}, không chữ trong ảnh, chủ thể to chiếm 40% khung.`],
-['🎨 Hình ảnh','Sửa ảnh bị lỗi','Chỉ sửa đúng lỗi',
-`Chỉnh sửa ảnh đính kèm. CHỈ sửa các lỗi sau: {note}
-Giữ nguyên tuyệt đối: bố cục, nhân vật ({chr}), trang phục, ánh sáng ({col}), góc máy, bối cảnh. Không thêm hay bớt chi tiết nào khác.`],
+KẾT QUẢ NGHIÊN CỨU NGÁCH:
+${O('research')}
+${lessons()}
+Hôm nay là ${new Date().toLocaleDateString('vi-VN')}. Dựa vào nghiên cứu trên (và thời điểm/mùa hiện tại), tạo 10 ý tưởng ${P.s.fmt} bằng ${P.s.lang}.
+ĐỊNH DẠNG BẮT BUỘC: mỗi ý tưởng đúng 1 dòng, bắt đầu bằng số thứ tự:
+1. [Tiêu đề hook ≤12 từ] — [mô tả 1 câu] — [cụm nội dung] — [điểm viral /10]
+Sắp xếp theo điểm giảm dần. Không viết gì thêm.`},
 
-// VIDEO & VOICE
-['🎬 Video & Voice','Prompt chuyển động (Flow/Veo/Kling)','Ảnh → video 5–8s',
-`Animate this image, 6 seconds, {ratio}.
-Camera: slow push-in (or gentle pan), smooth and stable.
-Motion: subtle natural movement only — {note}
-Keep the character ({chr}) identical: same face, outfit, proportions throughout.
-Lighting stays consistent: {col}.
-Avoid: morphing faces, extra limbs, sudden cuts, flickering, text appearing, camera shake, objects changing shape.`],
-['🎬 Video & Voice','Lời đọc voice-over','Chuẩn nhịp cho AI voice',
-`Chuyển nội dung sau thành lời đọc voice-over {lang} cho AI giọng nói: chia câu ngắn, thêm dấu "…" ở chỗ cần ngắt, viết số thành chữ, đánh dấu [nhấn] cho từ quan trọng, mỗi đoạn tương ứng 1 cảnh. Giọng {tone}.
-{note}`],
-['🎬 Video & Voice','Chọn nhạc & âm thanh','Mood âm thanh',
-`Đề xuất mood nhạc nền, nhịp BPM, 5 hiệu ứng âm thanh và thời điểm chèn cho video "{topic}" giọng {tone}. Gợi ý từ khóa để tìm nhạc miễn phí bản quyền.`],
+{id:'hooks',n:'Hook',sc:'ps',need:['ideas'],pick:'hook',
+ info:'Lấy từ: Ý tưởng đã chọn → Chọn 1 hook cho kịch bản',
+ p:()=>`${ctx()}
 
-// ĐĂNG
-['📣 Đăng bài','Caption + 5 hashtag','Ngắt dòng ⠀ cho TikTok',
-`Viết 3 caption {plat} cho bài "{topic}" ({lang}, giọng {tone}): dòng 1 là hook, 2–4 dòng nội dung, 1 câu hỏi kích bình luận. Ngắt dòng bằng ký tự ⠀. Kèm đúng 5 hashtag: 2 rộng, 2 ngách {niche}, 1 trend.`],
-['📣 Đăng bài','Tiêu đề & mô tả YouTube','SEO',
-`Viết 5 tiêu đề YouTube (≤60 ký tự, {lang}) cho video "{topic}", mô tả 150 từ có từ khóa, 15 tag, và 3 câu ghim bình luận kích tương tác.`],
-['📣 Đăng bài','Lịch đăng 2 tuần','Kế hoạch nội dung',
-`Lập lịch đăng 14 ngày cho kênh "{niche}" trên {plat}: ngày, giờ đăng tốt cho khán giả {aud}, chủ đề, định dạng, mục tiêu (viral/lưu/bình luận/follow). Xen kẽ các cụm nội dung để không nhàm.`],
-['📣 Đăng bài','Trả lời bình luận','Tăng tương tác',
-`Viết 5 cách trả lời cho bình luận sau, giọng {tone}, {lang}, tự nhiên, gợi tiếp cuộc trò chuyện, có 1 cách gợi ý làm video trả lời: "{note}"`],
+Ý TƯỞNG ĐÃ CHỌN: ${P.pick.idea||'[chưa chọn]'}
+${lessons()}
+Viết 8 hook mở đầu cho ý tưởng này, mỗi hook một kiểu khác nhau (câu hỏi "Tại sao", con số, cảnh báo, bí mật, gọi tên người xem, phủ định, câu chuyện, khoảng trống tò mò). Mỗi hook ≤12 từ, ${P.s.lang}.
+ĐỊNH DẠNG: mỗi hook 1 dòng, bắt đầu bằng số. Hook mạnh nhất để đầu tiên. Không viết gì thêm.`},
 
-// PHÂN TÍCH
-['📊 Phân tích','Chẩn đoán video','Vì sao view thấp/cao',
-`Phân tích số liệu video "{topic}" trên {plat}: {note}
-(views, thời gian xem TB, % xem hết, like, share, save, follow, CTR nếu có)
-Chẩn đoán vấn đề nằm ở: hook / nội dung giữa / kết / thumbnail-tiêu đề / chủ đề. Đưa 3 thay đổi cụ thể cho bài tiếp theo.`],
-['📊 Phân tích','Tổng kết tuần','Ra quyết định tiếp',
-`Dưới đây là số liệu các bài tuần này: {note}
-Hãy: xếp hạng bài, tìm điểm chung của bài tốt nhất và kém nhất, đề xuất nên làm thêm gì / bỏ gì, và gợi ý 5 chủ đề tuần sau. Kết luận: tiếp tục / xoay góc / đổi ngách.`]
+{id:'script',n:'Nội dung / Kịch bản',sc:'ps',need:['hooks'],
+ info:'Lấy từ: Ý tưởng + Hook + Nghiên cứu → Dùng cho: Prompt ảnh, Voice, Caption',
+ p:()=>{const base=`${ctx()}
+
+Ý TƯỞNG: ${P.pick.idea}
+HOOK MỞ ĐẦU (giữ nguyên): ${P.pick.hook}
+NỖI ĐAU & NGÔN NGỮ KHÁN GIẢ (từ nghiên cứu):
+${O('research').slice(0,900)}
+${lessons()}`;
+ const f=P.s.fmt;
+ if(/1 slide/.test(f))return base+`
+Viết nội dung cho 1 slide ảnh duy nhất. Trả về đúng định dạng:
+SLIDE 1
+Tiêu đề nhỏ: (≤5 từ)
+Câu chính: (≤20 từ, đọc là thấy mình trong đó)
+Từ nhấn màu: (1–2 từ)
+Hình ảnh: (mô tả cảnh bằng tiếng Anh, khớp ý nghĩa câu)`;
+ if(/Carousel/.test(f))return base+`
+Viết carousel 7 slide, chuỗi tò mò: slide 1 là hook, slide 2–6 mỗi slide 1 ý ≤25 từ kèm nhãn (SỰ THẬT/BÍ MẬT/SAI LẦM/CÁCH LÀM) và câu treo dẫn sang slide sau, slide 7 kết luận đáng lưu + CTA.
+Định dạng mỗi slide:
+SLIDE n
+Nhãn:
+Chữ trên ảnh:
+Từ nhấn màu:
+Hình ảnh: (tiếng Anh)`;
+ if(isLong())return base+`
+Viết kịch bản YouTube ~10 phút (~1.400 từ): cold open 30s → hứa hẹn → 4 chương có mini-hook → cao trào → kết + CTA.
+Định dạng mỗi cảnh:
+SHOT n
+VO: (1–3 câu)
+Hình ảnh: (tiếng Anh)`;
+ return base+`
+Viết kịch bản video ${f}. Hook ≤3 giây, câu ≤15 từ, twist ở ~70% thời lượng, kết bằng câu đáng chia sẻ + CTA nhẹ.
+Định dạng mỗi cảnh:
+SHOT n (thời gian)
+VO:
+Chữ trên màn hình:
+Hình ảnh: (tiếng Anh)`}},
+
+{id:'bible',n:'Visual Bible',sc:'pj',need:['research'],
+ info:'Làm 1 lần cho cả kênh → Tự gắn vào mọi prompt ảnh/video',
+ p:()=>`${ctx()}
+Phong cách mong muốn: ${P.s.vis}
+Màu chủ đạo: ${P.s.col}
+Nhân vật: ${P.s.chr||'tự đề xuất 1 nhân vật đại diện cho khán giả'}
+Định vị kênh: ${O('research').split('\n').slice(-3).join(' ')}
+
+Tạo Visual Bible bằng TIẾNG ANH, trả về một khối duy nhất bắt đầu bằng "CONTINUITY LOCK:" gồm:
+- STYLE, COLOR PALETTE (HEX), LIGHTING, CAMERA (lenses/angles thường dùng)
+- CHARACTER: mô tả cố định (tuổi, khuôn mặt, tóc, trang phục)
+- RECURRING SETTINGS
+- TEXT LAYOUT: vùng trống cho chữ
+- NEGATIVE: lỗi cấm (no text, no watermark, no extra fingers, no deformed face, no duplicate characters…)
+Viết ngắn gọn, tối đa 150 từ, để dán thẳng vào prompt ảnh.`},
+
+{id:'img',n:'Prompt ảnh',sc:'ps',need:['script','bible'],
+ info:'Lấy từ: Kịch bản + Visual Bible → Dán vào Copilot/Flow tạo ảnh',
+ p:()=>`Từ NỘI DUNG và VISUAL BIBLE dưới đây, viết prompt ảnh tiếng Anh cho TỪNG slide/shot.
+Mỗi prompt là 1 đoạn độc lập, đánh số khớp với slide/shot, gồm: style, shot type, mô tả cảnh khớp đúng ý nghĩa nội dung, character lock, lighting, tỉ lệ ${ratio()}, vùng trống cho chữ, và dòng "Negative:".
+${/slide|Carousel/i.test(P.s.fmt)?`Có chèn chữ ${P.s.lang} lên ảnh: ghi rõ chữ trong ngoặc kép, chữ lớn đậm căn giữa, từ nhấn tô vàng; cấm mọi chữ nhỏ khác trên sách, giấy, bảng hiệu.`:'Không có chữ trong ảnh.'}
+Giữ continuity tuyệt đối giữa các ảnh.
+
+VISUAL BIBLE:
+${O('bible')}
+
+NỘI DUNG:
+${O('script')}`},
+
+{id:'motion',n:'Prompt chuyển động',sc:'ps',need:['img'],when:isVideo,
+ info:'Chỉ cho video. Lấy từ: Prompt ảnh → Dán vào Flow/Veo/Kling',
+ p:()=>`Với mỗi prompt ảnh dưới đây, viết prompt chuyển động (image-to-video, 6–8 giây, ${ratio()}) bằng tiếng Anh, đánh số khớp shot. Mỗi prompt gồm: camera movement (chậm, ổn định), chuyển động chủ thể tinh tế khớp lời VO, giữ nguyên nhân vật và ánh sáng, dòng "Avoid:" (morphing face, extra limbs, flicker, text appearing, sudden cuts, objects changing shape).
+
+PROMPT ẢNH:
+${O('img')}
+
+KỊCH BẢN (để khớp hành động):
+${O('script')}`},
+
+{id:'voice',n:'Voice-over',sc:'ps',need:['script'],when:isVideo,
+ info:'Chỉ cho video. Lấy từ: Kịch bản → Dán vào AI voice',
+ p:()=>`Từ kịch bản dưới đây, trích riêng lời VO thành bản đọc cho AI voice, ${P.s.lang}, giọng ${P.s.tone}.
+Giữ đánh số SHOT. Câu ngắn, thêm "…" ở chỗ ngắt, viết số thành chữ, đánh dấu [nhấn] từ quan trọng. Không thêm nội dung mới.
+
+KỊCH BẢN:
+${O('script')}`},
+
+{id:'caption',n:'Caption & đăng',sc:'ps',need:['script'],
+ info:'Lấy từ: Hook + Kịch bản → Đăng bài',
+ p:()=>`${ctx()}
+HOOK: ${P.pick.hook}
+NỘI DUNG:
+${O('script')}
+
+Viết ${isLong()?'5 tiêu đề YouTube (≤60 ký tự), mô tả 150 từ chuẩn SEO, 15 tag, 1 bình luận ghim':`3 caption ${P.s.plat}: dòng 1 là hook, 2–4 dòng nội dung, 1 câu hỏi kích bình luận, ngắt dòng bằng ký tự ⠀, kèm đúng 5 hashtag (2 rộng, 2 ngách, 1 trend)`}. Gợi ý thêm khung giờ đăng tốt cho khán giả này. Ngôn ngữ ${P.s.lang}.`},
+
+{id:'review',n:'Đo & rút bài học',sc:'ps',need:['caption'],metrics:true,
+ info:'Sau 24–72h: nhập số liệu → AI rút bài học → Tự đưa vào bước Ý tưởng & Hook của bài sau',
+ p:()=>`${ctx()}
+BÀI ĐÃ ĐĂNG:
+Ý tưởng: ${P.pick.idea}
+Hook: ${P.pick.hook}
+SỐ LIỆU: ${P.s.metrics||'[nhập số liệu ở trên]'}
+${P.lessons.length?'SỐ LIỆU/BÀI HỌC TRƯỚC:\n'+P.lessons.slice(-3).join('\n---\n'):''}
+
+Chẩn đoán: vấn đề/điểm mạnh nằm ở hook, nội dung giữa, kết, hình ảnh hay chủ đề?
+Sau đó trả về ĐÚNG 1 khối bắt đầu bằng "BÀI HỌC:" gồm tối đa 5 gạch đầu dòng ngắn, cụ thể, áp dụng được cho bài tiếp theo (giữ gì, bỏ gì, thử gì).`}
 ];
 
-let cat='Tất cả';
-function vars(){const v={...S.v};F.forEach(k=>v[k]=v[k]||'');
- v.date=new Date().toLocaleDateString('vi-VN');
- v.ratio=/YouTube dài/.test(v.plat)?'16:9 horizontal':'9:16 vertical';
- v.chrx=v.chr?`, nhân vật: ${v.chr}`:'';
- if(!v.chr)v.chr='(no fixed character)';
- ['niche','topic','aud','note'].forEach(k=>{if(!S.v[k])v[k]='['+{niche:'NGÁCH',topic:'CHỦ ĐỀ',aud:'KHÁN GIẢ',note:'DÁN NỘI DUNG'}[k]+']'});
- return v}
-const fill=p=>{const v=vars();return p.replace(/\{(\w+)\}/g,(m,k)=>v[k]!==undefined?v[k]:m)};
-function all(){return T.concat(S.mine.map(x=>['✍️ Của tôi',x.n,'Template tự tạo',x.p]))}
-function renderCats(){const cs=['Tất cả','⭐ Yêu thích',...new Set(all().map(t=>t[0]))];
- $('cats').innerHTML=cs.map(c=>`<button class="${c==cat?'on':''}" onclick="cat='${c}';renderCats();renderLib()">${c}</button>`).join('')}
-function renderLib(){const q=$('q').value.toLowerCase();
- const list=all().map((t,i)=>({t,i})).filter(({t})=>(cat=='Tất cả'||t[0]==cat||(cat=='⭐ Yêu thích'&&S.fav.includes(t[1])))&&(t[1]+t[2]).toLowerCase().includes(q));
- $('lib').innerHTML=list.map(({t,i})=>`<div class="tp"><div class="h"><b>${t[1]}</b><button class="star ${S.fav.includes(t[1])?'on':''}" onclick="fav('${t[1].replace(/'/g,"\\'")}')">★</button></div>
- <div class="d">${t[0]} · ${t[2]}</div>
- <div class="acts"><button onclick="cp(${i})">📋 Copy prompt</button><button class="sec" onclick="pv(${i})">👁 Xem</button></div>
- <div class="out" id="pv${i}" style="display:none"></div></div>`).join('')||'<p class="hint">Không có template.</p>'}
-function cp(i){navigator.clipboard.writeText(fill(all()[i][3])).then(()=>toast('Đã copy ✓'))}
-function pv(i){const e=$('pv'+i);e.style.display=e.style.display=='none'?'block':'none';e.textContent=fill(all()[i][3])}
-function fav(n){S.fav.includes(n)?S.fav.splice(S.fav.indexOf(n),1):S.fav.push(n);store();renderLib()}
+const active=()=>STEPS.filter(s=>!s.when||s.when());
+const done=s=>s.setup?!!P.s.niche:!!O(s.id)&&(!s.pick||!!P.pick[s.pick]);
 
-const FLOW=['10 hook cho 1 chủ đề','Carousel chuỗi tò mò','Kịch bản video ngắn','Prompt ảnh hàng loạt từ kịch bản','Prompt chuyển động (Flow/Veo/Kling)','Lời đọc voice-over','Caption + 5 hashtag','Chẩn đoán video'];
-function renderFlow(){const a=all();$('flow').innerHTML=FLOW.map((n,k)=>{const i=a.findIndex(t=>t[1]==n);
- return `<div class="step"><span>${k+1}</span>${n}<button onclick="cp(${i})">Copy</button></div>`}).join('')+
- `<p class="hint" style="margin-top:8px">Làm 1 slide: chỉ cần bước 1 → “1 slide trích dẫn” → “Ảnh slide có chữ” → bước 7.</p>`}
+function render(){
+ const A=active();if(P.cur>=A.length)P.cur=A.length-1;const st=A[P.cur];
+ $('prog').innerHTML=STEPS.map(s=>{const i=A.indexOf(s);return `<div class="${i<0?'skip':i==P.cur?'cur':done(s)?'done':''}" onclick="${i<0?'':`P.cur=${i};save();render()`}">${i<0?'–':done(s)&&i!=P.cur?'✓':i+1}</div>`}).join('');
+ $('sub').textContent=`Bước ${P.cur+1}/${A.length}: ${st.n}${P.s.niche?' · '+P.s.niche:''}`;
+ $('bBack').disabled=P.cur==0;
+ $('bNext').textContent=P.cur==A.length-1?'✓ Hoàn tất bài':'Tiếp →';
+ st.setup?renderSetup():renderStep(st);scrollTo(0,0)}
 
-function saveSet(){F.forEach(k=>S.v[k]=$(k).value.trim());store();toast('Đã lưu')}
-function loadSet(){F.forEach(k=>{if(S.v[k]!==undefined&&S.v[k]!=='')$(k).value=S.v[k]})}
-function applyPreset(){const p=PRESETS[$('preset').value];if(!p)return;$('niche').value=p[0];$('aud').value=p[1];$('tone').value=p[2]}
-function addMine(){const n=$('nT').value.trim(),p=$('nP').value.trim();if(!n||!p)return toast('Nhập đủ');S.mine.push({n,p});store();$('nT').value=$('nP').value='';renderCats();renderLib();toast('Đã thêm')}
-function exp(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='prompt-kit.json';a.click()}
-function imp(el){const r=new FileReader();r.onload=e=>{S=JSON.parse(e.target.result);store();location.reload()};r.readAsText(el.files[0])}
-function go(t){document.querySelector(`nav [data-t=${t}]`).click()}
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
- if($('s').classList.contains('on'))saveSet();
- document.querySelectorAll('nav button,.tab').forEach(x=>x.classList.remove('on'));
- b.classList.add('on');$(b.dataset.t).classList.add('on');renderCats();renderLib();renderFlow();scrollTo(0,0)});
-$('preset').innerHTML+=Object.keys(PRESETS).map(p=>`<option>${p}</option>`).join('');
-loadSet();renderCats();renderLib();renderFlow();
+function renderSetup(){const s=P.s,v=(k,d='')=>s[k]||d;
+ const sel=(k,a)=>`<select id="f_${k}">${a.map(o=>`<option ${o==s[k]?'selected':''}>${o}</option>`).join('')}</select>`;
+ $('main').innerHTML=`<div class="card"><h2>① Thiết lập dự án</h2><span class="tag pj">Cả kênh</span>
+ <p class="hint">Điền 1 lần. Mọi bước phía sau tự dùng các thông tin này.</p>
+ <label>Ngách / chủ đề kênh</label><input id="f_niche" value="${v('niche')}" placeholder="vd: tâm lý học cho người trẻ đi làm" list="nl">
+ <datalist id="nl">${['Tâm lý – cảm xúc người trẻ','Tài chính cá nhân cho người mới đi làm','Bí ẩn – truyền thuyết dân gian','Lịch sử ít người biết','Khoa học tò mò đời sống','Tư duy & phát triển bản thân','Tình cảm – mối quan hệ','Mẹo dùng AI cho công việc','Mẹo sống – gia đình','Sức khỏe – giấc ngủ','Giải thích kỹ thuật nhà máy','Tóm tắt sách'].map(x=>`<option>${x}`).join('')}</datalist>
+ <div class="g2"><div><label>Nền tảng</label>${sel('plat',['TikTok','YouTube Shorts','YouTube dài','Facebook Reels','Instagram Reels'])}</div>
+ <div><label>Ngôn ngữ / thị trường</label>${sel('lang',['Tiếng Việt – Việt Nam','Português – Brasil','English – US','Español – LatAm','Bahasa – Indonesia'])}</div>
+ <div><label>Định dạng</label>${sel('fmt',['1 slide ảnh','Carousel 7 slide','Video ngắn 30–60s','Video dài 8–12 phút'])}</div>
+ <div><label>Giọng điệu</label>${sel('tone',['sâu lắng, đồng cảm','bí ẩn, hồi hộp','hài hước, gần gũi','chuyên gia, rõ ràng','truyền cảm hứng mạnh'])}</div></div>
+ <label>Khán giả mục tiêu</label><input id="f_aud" value="${v('aud')}" placeholder="vd: 20–30 tuổi, đi làm, hay áp lực">
+ <label>Phong cách hình ảnh</label>${sel('vis',['cinematic photorealistic, moody','minimal clean flat illustration','soft anime watercolor','3D stylized Pixar-like','vintage 35mm film photo','dark fantasy painterly'])}
+ <label>Màu chủ đạo</label><input id="f_col" value="${v('col','deep blue-purple shadows, warm golden accent light')}">
+ <label>Nhân vật cố định (tùy chọn)</label><input id="f_chr" value="${v('chr')}" placeholder="để trống: AI tự đề xuất ở bước Visual Bible">
+ </div>`}
+
+function grab(){if(!$('f_niche'))return;['niche','plat','lang','fmt','tone','aud','vis','col','chr'].forEach(k=>P.s[k]=$('f_'+k).value.trim());save()}
+
+function renderStep(st){
+ const miss=(st.need||[]).map(id=>STEPS.find(x=>x.id==id)).filter(s=>!done(s)&&(!s.when||s.when()));
+ const prompt=st.p();
+ $('main').innerHTML=`<div class="card"><h2>${P.cur+1}. ${st.n}</h2>
+ <span class="tag ${st.sc}">${st.sc=='pj'?'Cả kênh – làm 1 lần':'Mỗi bài'}</span>${P.lessons.length&&['ideas','hooks','script'].includes(st.id)?'<span class="tag" style="background:#1d4d2b;color:#c7f7d4">+ bài học cũ</span>':''}
+ <div class="flowbox">🔗 ${st.info}</div>
+ ${miss.length?`<div class="miss">⚠ Chưa có kết quả bước: ${miss.map(m=>m.n).join(', ')} — prompt sẽ thiếu dữ liệu.</div>`:''}
+ ${st.metrics?`<label>Số liệu bài (views, % xem hết, like, share, save, follow, CTR…)</label><textarea id="met" style="min-height:60px" oninput="P.s.metrics=this.value;save()">${P.s.metrics||''}</textarea><button class="sec" style="margin-top:6px" onclick="render()">↻ Cập nhật prompt</button>`:''}
+ </div>
+ <div class="card"><b style="font-size:13px">A. Copy prompt → dán vào Copilot / ChatGPT</b>
+ <div class="out" id="pr">${esc(prompt)}</div>
+ <div class="row"><button onclick="cpy()">📋 Copy prompt</button></div></div>
+ <div class="card"><b style="font-size:13px">B. Dán kết quả AI trả về</b>
+ <textarea id="res" placeholder="Dán toàn bộ kết quả vào đây...">${esc(P.out[st.id]||'')}</textarea>
+ <div class="row"><button class="sec" onclick="paste()">📥 Dán từ clipboard</button><button class="ok" onclick="saveOut()">💾 Lưu</button></div>
+ <div id="pk"></div>
+ ${st.id=='review'?`<div id="ls"></div>`:''}
+ ${['img','motion','voice','caption'].includes(st.id)&&O(st.id)?'<button class="sec" style="width:100%;margin-top:8px" onclick="cpOut()">📋 Copy kết quả để dùng</button>':''}
+ </div>`;
+ $('res').oninput=()=>{P.out[st.id]=$('res').value;save()};
+ if(st.pick)renderPick(st);
+ if(st.id=='review')renderLessons()}
+
+const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function lines(t){return t.split('\n').map(l=>l.trim()).filter(l=>/^\d+[\.\)]/.test(l)).map(l=>l.replace(/^\d+[\.\)]\s*/,'').replace(/\*\*/g,''))}
+function renderPick(st){const L=lines(O(st.id));
+ $('pk').innerHTML=L.length?`<label style="margin-top:12px">👆 Chạm để chọn ${st.pick=='idea'?'ý tưởng':'hook'} dùng cho bước sau</label><div class="opts">${L.map((l,i)=>`<div class="opt ${P.pick[st.pick]==l?'on':''}" onclick="choose('${st.pick}',${i})">${esc(l)}</div>`).join('')}</div>`
+ :(O(st.id)?`<label style="margin-top:12px">Không nhận dạng được danh sách — nhập ${st.pick=='idea'?'ý tưởng':'hook'} đã chọn:</label><input value="${esc(P.pick[st.pick]||'')}" oninput="P.pick['${st.pick}']=this.value;save()">`:'')}
+function choose(k,i){const st=active()[P.cur];P.pick[k]=lines(O(st.id))[i];
+ if(k=='idea')delete P.pick.hook;save();renderPick(st);toast('Đã chọn ✓')}
+function renderLessons(){const t=O('review'),m=t.match(/BÀI HỌC:[\s\S]*/i);
+ $('ls').innerHTML=m?`<div class="lesson">${esc(m[0])}</div><p class="hint">✓ Bấm “Hoàn tất bài” để lưu bài học này. Nó sẽ tự chèn vào prompt Ý tưởng, Hook, Kịch bản của bài sau.</p>`:''}
+
+async function cpy(){await navigator.clipboard.writeText($('pr').textContent).catch(()=>{});toast('Đã copy prompt')}
+async function cpOut(){await navigator.clipboard.writeText($('res').value).catch(()=>{});toast('Đã copy')}
+async function paste(){try{const t=await navigator.clipboard.readText();$('res').value=t;saveOut()}catch{toast('Hãy nhấn giữ ô để dán')}}
+function saveOut(){const st=active()[P.cur];P.out[st.id]=$('res').value;save();toast('Đã lưu');renderStep(st);render()}
+
+function move(d){const A=active();if(A[P.cur].setup){grab();if(!P.s.niche&&d>0)return toast('Nhập ngách trước')}
+ else if($('res')){P.out[A[P.cur].id]=$('res').value;save()}
+ if(d>0&&A[P.cur].pick&&!P.pick[A[P.cur].pick]&&O(A[P.cur].id))return toast('Hãy chọn 1 dòng trước');
+ if(d>0&&P.cur==A.length-1)return finish();
+ P.cur=Math.max(0,Math.min(A.length-1,P.cur+d));save();render()}
+
+function finish(){const m=O('review').match(/BÀI HỌC:[\s\S]*/i);
+ P.history.push({d:new Date().toLocaleDateString('vi-VN'),idea:P.pick.idea,hook:P.pick.hook,metrics:P.s.metrics||''});
+ if(m)P.lessons.push(`[${P.pick.idea||''}] ${P.s.metrics||''}\n${m[0]}`);
+ save();if(confirm('Đã lưu bài'+(m?' + bài học':'')+'. Bắt đầu bài mới?'))newPost()}
+function newPost(){['ideas','hooks','script','img','motion','voice','caption','review'].forEach(k=>delete P.out[k]);
+ P.pick={};P.s.metrics='';P.cur=active().findIndex(s=>s.id=='ideas');save();$('menu').open&&$('menu').close();render();toast('Bài mới – giữ nghiên cứu & bài học')}
+function exp(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(P,null,1)],{type:'application/json'}));a.download='pipeline-'+(P.s.niche||'du-an').slice(0,20)+'.json';a.click()}
+function imp(el){const r=new FileReader();r.onload=e=>{P=JSON.parse(e.target.result);save();location.reload()};r.readAsText(el.files[0])}
+$('menu').addEventListener('toggle',()=>{});
+$('menu').onclick=e=>{};
+document.querySelector('header button').addEventListener('click',()=>{$('stat').textContent=`Đã hoàn tất ${P.history.length} bài · ${P.lessons.length} bài học được tích lũy · ${(JSON.stringify(P).length/1024).toFixed(0)} KB`});
+render();
 </script>
 </body>
 </html>
