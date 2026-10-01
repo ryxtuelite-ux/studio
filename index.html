@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#14112b">
-<title>Content Pipeline – Quy trình nối chuỗi</title>
+<title>Content Pipeline v3 – AI tự chấm & chọn</title>
 <style>
 :root{--bg:#0f0d22;--card:#1b1838;--c2:#25214a;--t:#ecebff;--m:#9d98c9;--a:#ffc94a;--p:#7c6cff;--ok:#4ade80;--bad:#f87171}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -29,10 +29,7 @@ button{background:var(--p);color:#fff;border:0;border-radius:10px;padding:11px 1
 .out{background:#0b0a1a;border:1px dashed #3a3470;border-radius:10px;padding:10px;white-space:pre-wrap;font-size:12.5px;line-height:1.5;max-height:38vh;overflow:auto;margin-top:6px}
 .hint{color:var(--m);font-size:12.5px;line-height:1.45;margin-top:4px}
 .flowbox{background:#16133a;border-left:3px solid var(--a);border-radius:8px;padding:8px 10px;margin:8px 0;font-size:12.5px;color:var(--m)}
-.flowbox b{color:var(--t)}
 .row{display:flex;gap:8px;margin-top:8px}.row>*{flex:1}
-.opts{margin-top:8px}.opt{background:var(--c2);border:1px solid #3a3470;border-radius:10px;padding:9px;margin-top:6px;font-size:13.5px}
-.opt.on{border-color:var(--a);background:#3a3010}
 .bot{position:fixed;bottom:0;left:0;right:0;background:#17143a;border-top:1px solid #2e2960;padding:8px 10px;display:flex;gap:8px;z-index:9}
 .bot button{flex:1}
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--ok);color:#042;padding:8px 16px;border-radius:20px;font-weight:700;display:none;z-index:20}
@@ -40,12 +37,28 @@ button{background:var(--p);color:#fff;border:0;border-radius:10px;padding:11px 1
 .lesson{background:#1d2b1f;border-radius:8px;padding:8px;font-size:12.5px;margin-top:6px;white-space:pre-wrap}
 dialog{background:var(--card);color:var(--t);border:1px solid #3a3470;border-radius:14px;padding:14px;width:92%;max-width:480px}
 dialog::backdrop{background:#000a}
+/* chấm điểm */
+.sc{background:var(--c2);border:1px solid #3a3470;border-radius:12px;padding:10px;margin-top:8px}
+.sc.pick{border-color:var(--a);background:#2e2710}
+.sc .hd{display:flex;gap:8px;align-items:flex-start}
+.sc .tx{flex:1;font-size:14px;line-height:1.4}
+.badge{flex:none;min-width:54px;text-align:center;border-radius:8px;padding:4px 6px;font-weight:800;font-size:15px;background:#2a2655;color:var(--m)}
+.badge small{display:block;font-size:10px;font-weight:500}
+.b-hi{background:#14532d;color:#bbf7d0}.b-md{background:#713f12;color:#fde68a}.b-lo{background:#7f1d1d;color:#fecaca}
+.crit{display:flex;align-items:center;gap:6px;margin-top:7px}
+.crit .cn{flex:1;font-size:12px;color:var(--m);line-height:1.25}.crit .cn b{color:var(--t);font-size:12.5px}
+.dots{display:flex;gap:4px}
+.dots button{width:30px;height:30px;padding:0;border-radius:8px;background:#1b1838;border:1px solid #3a3470;font-size:13px;color:var(--m)}
+.dots button.on{background:var(--a);color:#1a1300;border-color:var(--a)}
+.acts{display:flex;gap:6px;margin-top:8px}.acts button{flex:1;padding:8px;font-size:13px}
+.flag{color:var(--bad);font-size:12px;margin-top:5px}
+.sum{background:#16133a;border-radius:10px;padding:8px 10px;margin-top:10px;font-size:12.5px;line-height:1.5}
 </style>
 </head>
 <body>
 <header>
- <div class="top"><div><h1>🔗 Content Pipeline</h1><small id="sub">Mỗi bước tự lấy kết quả của bước trước</small></div>
- <button class="sec" style="padding:7px 10px" onclick="$('menu').showModal()">☰</button></div>
+ <div class="top"><div><h1>🔗 Content Pipeline</h1><small id="sub"></small></div>
+ <button class="sec" style="padding:7px 10px" id="mbtn">☰</button></div>
  <div class="prog" id="prog"></div>
 </header>
 <main id="main"></main>
@@ -65,23 +78,43 @@ dialog::backdrop{background:#000a}
 
 <script>
 const $=id=>document.getElementById(id);
-const K='pipeline_v1';
-let P=JSON.parse(localStorage.getItem(K)||'null')||{cur:0,s:{},out:{},pick:{},lessons:[],history:[]};
+const K='pipeline_v3';
+let P=JSON.parse(localStorage.getItem(K)||'null')||{};
+P.cur=P.cur||0;P.s=P.s||{};P.out=P.out||{};P.pick=P.pick||{};P.lessons=P.lessons||[];P.history=P.history||[];
+P.sc=P.sc||{idea:{},hook:{}};P.auto=P.auto||{};P.why=P.why||{};
 const save=()=>localStorage.setItem(K,JSON.stringify(P));
 const toast=m=>{$('toast').textContent=m;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',1500)};
 const isVideo=()=>/Video/.test(P.s.fmt||'');
 const isLong=()=>/dài/.test(P.s.fmt||'');
 const ratio=()=>isLong()?'16:9 horizontal':'9:16 vertical';
 const O=id=>(P.out[id]||'').trim();
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const lessons=()=>P.lessons.length?`\nBÀI HỌC TỪ CÁC BÀI TRƯỚC (bắt buộc áp dụng):\n${P.lessons.slice(-3).join('\n---\n')}\n`:'';
 const ctx=()=>`Ngách: ${P.s.niche}\nNền tảng: ${P.s.plat}\nThị trường/ngôn ngữ: ${P.s.lang}\nKhán giả: ${P.s.aud}\nGiọng điệu: ${P.s.tone}\nĐịnh dạng: ${P.s.fmt}`;
+
+/* ============ TIÊU CHÍ TỰ CHẤM ============ */
+const CR={
+ idea:[
+  ['Khán giả cần','Đúng nỗi đau / mong muốn thật của họ?',1.5],
+  ['Khác biệt','Góc nhìn mới, chưa bị làm nát?',1.2],
+  ['Hợp lúc này','Gắn mùa, sự kiện, trend hiện tại?',0.8],
+  ['Dễ làm','Đủ tư liệu, làm xong trong hôm nay?',1],
+  ['Mình thích','Hào hứng làm, nói được sâu?',1]],
+ hook:[
+  ['Tò mò','Đọc xong có muốn xem tiếp ngay?',1.5],
+  ['Rõ & ngắn','Hiểu trong 2 giây, không cần nghĩ?',1.2],
+  ['Chạm','Người xem thấy chính mình trong đó?',1.3],
+  ['Giữ lời hứa','Nội dung trả lời được, không câu view?',1],
+  ['Không sáo rỗng','Khác kiểu hook ai cũng dùng?',0.8]]};
+function score(k,t){const a=P.sc[k][t]||[],c=CR[k];if(a.filter(Boolean).length<c.length)return{pct:null,min:10};
+ let x=0,m=0;c.forEach((q,i)=>{x+=a[i]*q[2];m+=10*q[2]});return{pct:Math.round(x/m*100),min:Math.min(...a)}}
+function verdict(p){return p>=80?['🔥 Làm ngay','b-hi']:p>=60?['👍 Ổn','b-md']:['✋ Cân nhắc','b-lo']}
 
 /* ============ PIPELINE ============ */
 const STEPS=[
 {id:'setup',n:'Thiết lập',sc:'pj',setup:true},
-
 {id:'research',n:'Nghiên cứu ngách',sc:'pj',need:['setup'],
- info:'Lấy từ: Thiết lập → Kết quả dùng cho: Ý tưởng, Visual Bible',
+ info:'Lấy từ: Thiết lập → Dùng cho: Ý tưởng, Kịch bản, Visual Bible',
  p:()=>`Đóng vai chuyên gia chiến lược nội dung ${P.s.plat}.
 ${ctx()}
 
@@ -93,30 +126,35 @@ Phân tích ngách này, trình bày gọn:
 5. Từ ngữ, cách nói khán giả hay dùng.
 6. Rủi ro chính sách/bản quyền cần tránh.
 7. Kết luận 1 câu: định vị kênh.`},
-
 {id:'ideas',n:'Ý tưởng',sc:'ps',need:['research'],pick:'idea',
- info:'Lấy từ: Nghiên cứu + Bài học cũ → Chọn 1 ý tưởng để dùng cho bước sau',
+ info:'Lấy từ: Nghiên cứu + Bài học cũ → AI tự chấm & chọn ý tưởng tốt nhất (bạn đổi được)',
  p:()=>`${ctx()}
 
 KẾT QUẢ NGHIÊN CỨU NGÁCH:
 ${O('research')}
 ${lessons()}
-Hôm nay là ${new Date().toLocaleDateString('vi-VN')}. Dựa vào nghiên cứu trên (và thời điểm/mùa hiện tại), tạo 10 ý tưởng ${P.s.fmt} bằng ${P.s.lang}.
-ĐỊNH DẠNG BẮT BUỘC: mỗi ý tưởng đúng 1 dòng, bắt đầu bằng số thứ tự:
-1. [Tiêu đề hook ≤12 từ] — [mô tả 1 câu] — [cụm nội dung] — [điểm viral /10]
-Sắp xếp theo điểm giảm dần. Không viết gì thêm.`},
-
+Hôm nay là ${new Date().toLocaleDateString('vi-VN')}. Dựa vào nghiên cứu trên (và thời điểm/mùa hiện tại), tạo 10 ý tưởng ${P.s.fmt} bằng ${P.s.lang}, đa dạng các cụm nội dung.
+Sau đó TỰ CHẤM từng ý tưởng thang 1–10 theo 5 tiêu chí: ${CR.idea.map(c=>c[0]+' ('+c[1]+')').join('; ')}.
+Chấm khắt khe như một biên tập viên, không cho điểm đều nhau; điểm 9–10 chỉ dành cho ý thật sự xuất sắc.
+ĐỊNH DẠNG BẮT BUỘC, mỗi ý tưởng đúng 1 dòng:
+1. [Tiêu đề ≤12 từ] — [mô tả 1 câu] | [5 điểm cách nhau bởi dấu phẩy]
+Dòng cuối cùng: CHỌN: [số] — [lý do 1 câu vì sao ý này tốt nhất]
+Không viết gì thêm.`},
 {id:'hooks',n:'Hook',sc:'ps',need:['ideas'],pick:'hook',
- info:'Lấy từ: Ý tưởng đã chọn → Chọn 1 hook cho kịch bản',
+ info:'Lấy từ: Ý tưởng bạn đã chọn → AI tự chấm & chọn hook tốt nhất (bạn đổi được)',
  p:()=>`${ctx()}
 
 Ý TƯỞNG ĐÃ CHỌN: ${P.pick.idea||'[chưa chọn]'}
 ${lessons()}
 Viết 8 hook mở đầu cho ý tưởng này, mỗi hook một kiểu khác nhau (câu hỏi "Tại sao", con số, cảnh báo, bí mật, gọi tên người xem, phủ định, câu chuyện, khoảng trống tò mò). Mỗi hook ≤12 từ, ${P.s.lang}.
-ĐỊNH DẠNG: mỗi hook 1 dòng, bắt đầu bằng số. Hook mạnh nhất để đầu tiên. Không viết gì thêm.`},
-
+Sau đó TỰ CHẤM từng hook thang 1–10 theo 5 tiêu chí: ${CR.hook.map(c=>c[0]+' ('+c[1]+')').join('; ')}.
+Chấm khắt khe, không cho điểm đều nhau.
+ĐỊNH DẠNG BẮT BUỘC, mỗi hook đúng 1 dòng:
+1. [hook] | [5 điểm cách nhau bởi dấu phẩy]
+Dòng cuối cùng: CHỌN: [số] — [lý do 1 câu]
+Không viết gì thêm.`},
 {id:'script',n:'Nội dung / Kịch bản',sc:'ps',need:['hooks'],
- info:'Lấy từ: Ý tưởng + Hook + Nghiên cứu → Dùng cho: Prompt ảnh, Voice, Caption',
+ info:'Lấy từ: Ý tưởng + Hook đã chọn + Nghiên cứu → Dùng cho: Prompt ảnh, Voice, Caption',
  p:()=>{const base=`${ctx()}
 
 Ý TƯỞNG: ${P.pick.idea}
@@ -124,7 +162,7 @@ HOOK MỞ ĐẦU (giữ nguyên): ${P.pick.hook}
 NỖI ĐAU & NGÔN NGỮ KHÁN GIẢ (từ nghiên cứu):
 ${O('research').slice(0,900)}
 ${lessons()}`;
- const f=P.s.fmt;
+ const f=P.s.fmt||'';
  if(/1 slide/.test(f))return base+`
 Viết nội dung cho 1 slide ảnh duy nhất. Trả về đúng định dạng:
 SLIDE 1
@@ -153,7 +191,6 @@ SHOT n (thời gian)
 VO:
 Chữ trên màn hình:
 Hình ảnh: (tiếng Anh)`}},
-
 {id:'bible',n:'Visual Bible',sc:'pj',need:['research'],
  info:'Làm 1 lần cho cả kênh → Tự gắn vào mọi prompt ảnh/video',
  p:()=>`${ctx()}
@@ -163,18 +200,17 @@ Nhân vật: ${P.s.chr||'tự đề xuất 1 nhân vật đại diện cho khán
 Định vị kênh: ${O('research').split('\n').slice(-3).join(' ')}
 
 Tạo Visual Bible bằng TIẾNG ANH, trả về một khối duy nhất bắt đầu bằng "CONTINUITY LOCK:" gồm:
-- STYLE, COLOR PALETTE (HEX), LIGHTING, CAMERA (lenses/angles thường dùng)
+- STYLE, COLOR PALETTE (HEX), LIGHTING, CAMERA
 - CHARACTER: mô tả cố định (tuổi, khuôn mặt, tóc, trang phục)
 - RECURRING SETTINGS
 - TEXT LAYOUT: vùng trống cho chữ
 - NEGATIVE: lỗi cấm (no text, no watermark, no extra fingers, no deformed face, no duplicate characters…)
-Viết ngắn gọn, tối đa 150 từ, để dán thẳng vào prompt ảnh.`},
-
+Tối đa 150 từ, để dán thẳng vào prompt ảnh.`},
 {id:'img',n:'Prompt ảnh',sc:'ps',need:['script','bible'],
  info:'Lấy từ: Kịch bản + Visual Bible → Dán vào Copilot/Flow tạo ảnh',
  p:()=>`Từ NỘI DUNG và VISUAL BIBLE dưới đây, viết prompt ảnh tiếng Anh cho TỪNG slide/shot.
 Mỗi prompt là 1 đoạn độc lập, đánh số khớp với slide/shot, gồm: style, shot type, mô tả cảnh khớp đúng ý nghĩa nội dung, character lock, lighting, tỉ lệ ${ratio()}, vùng trống cho chữ, và dòng "Negative:".
-${/slide|Carousel/i.test(P.s.fmt)?`Có chèn chữ ${P.s.lang} lên ảnh: ghi rõ chữ trong ngoặc kép, chữ lớn đậm căn giữa, từ nhấn tô vàng; cấm mọi chữ nhỏ khác trên sách, giấy, bảng hiệu.`:'Không có chữ trong ảnh.'}
+${/slide|Carousel/i.test(P.s.fmt||'')?`Có chèn chữ ${P.s.lang} lên ảnh: ghi rõ chữ trong ngoặc kép, chữ lớn đậm căn giữa, từ nhấn tô vàng; cấm mọi chữ nhỏ khác trên sách, giấy, bảng hiệu.`:'Không có chữ trong ảnh.'}
 Giữ continuity tuyệt đối giữa các ảnh.
 
 VISUAL BIBLE:
@@ -182,7 +218,6 @@ ${O('bible')}
 
 NỘI DUNG:
 ${O('script')}`},
-
 {id:'motion',n:'Prompt chuyển động',sc:'ps',need:['img'],when:isVideo,
  info:'Chỉ cho video. Lấy từ: Prompt ảnh → Dán vào Flow/Veo/Kling',
  p:()=>`Với mỗi prompt ảnh dưới đây, viết prompt chuyển động (image-to-video, 6–8 giây, ${ratio()}) bằng tiếng Anh, đánh số khớp shot. Mỗi prompt gồm: camera movement (chậm, ổn định), chuyển động chủ thể tinh tế khớp lời VO, giữ nguyên nhân vật và ánh sáng, dòng "Avoid:" (morphing face, extra limbs, flicker, text appearing, sudden cuts, objects changing shape).
@@ -190,9 +225,8 @@ ${O('script')}`},
 PROMPT ẢNH:
 ${O('img')}
 
-KỊCH BẢN (để khớp hành động):
+KỊCH BẢN:
 ${O('script')}`},
-
 {id:'voice',n:'Voice-over',sc:'ps',need:['script'],when:isVideo,
  info:'Chỉ cho video. Lấy từ: Kịch bản → Dán vào AI voice',
  p:()=>`Từ kịch bản dưới đây, trích riêng lời VO thành bản đọc cho AI voice, ${P.s.lang}, giọng ${P.s.tone}.
@@ -200,7 +234,6 @@ Giữ đánh số SHOT. Câu ngắn, thêm "…" ở chỗ ngắt, viết số t
 
 KỊCH BẢN:
 ${O('script')}`},
-
 {id:'caption',n:'Caption & đăng',sc:'ps',need:['script'],
  info:'Lấy từ: Hook + Kịch bản → Đăng bài',
  p:()=>`${ctx()}
@@ -208,19 +241,23 @@ HOOK: ${P.pick.hook}
 NỘI DUNG:
 ${O('script')}
 
-Viết ${isLong()?'5 tiêu đề YouTube (≤60 ký tự), mô tả 150 từ chuẩn SEO, 15 tag, 1 bình luận ghim':`3 caption ${P.s.plat}: dòng 1 là hook, 2–4 dòng nội dung, 1 câu hỏi kích bình luận, ngắt dòng bằng ký tự ⠀, kèm đúng 5 hashtag (2 rộng, 2 ngách, 1 trend)`}. Gợi ý thêm khung giờ đăng tốt cho khán giả này. Ngôn ngữ ${P.s.lang}.`},
-
+Viết ${isLong()?'5 tiêu đề YouTube (≤60 ký tự), mô tả 150 từ chuẩn SEO, 15 tag, 1 bình luận ghim':`3 caption ${P.s.plat}: dòng 1 là hook, 2–4 dòng nội dung, 1 câu hỏi kích bình luận, ngắt dòng bằng ký tự ⠀, kèm đúng 5 hashtag (2 rộng, 2 ngách, 1 trend)`}. Gợi ý khung giờ đăng tốt cho khán giả này. Ngôn ngữ ${P.s.lang}.`},
 {id:'review',n:'Đo & rút bài học',sc:'ps',need:['caption'],metrics:true,
- info:'Sau 24–72h: nhập số liệu → AI rút bài học → Tự đưa vào bước Ý tưởng & Hook của bài sau',
- p:()=>`${ctx()}
+ info:'Sau 24–72h: nhập số liệu → So sánh điểm AI chấm với kết quả thật → Bài học cho bài sau',
+ p:()=>{const si=score('idea',P.pick.idea||''),sh=score('hook',P.pick.hook||'');
+ const det=(k,t)=>{const a=P.sc[k][t]||[];return CR[k].map((c,i)=>`${c[0]} ${a[i]||'-'}/10`).join(', ')};
+ return `${ctx()}
 BÀI ĐÃ ĐĂNG:
 Ý tưởng: ${P.pick.idea}
+→ AI chấm trước khi đăng: ${si.pct??'chưa chấm'}% (${det('idea',P.pick.idea||'')})
 Hook: ${P.pick.hook}
-SỐ LIỆU: ${P.s.metrics||'[nhập số liệu ở trên]'}
-${P.lessons.length?'SỐ LIỆU/BÀI HỌC TRƯỚC:\n'+P.lessons.slice(-3).join('\n---\n'):''}
+→ AI chấm trước khi đăng: ${sh.pct??'chưa chấm'}% (${det('hook',P.pick.hook||'')})
+SỐ LIỆU THẬT: ${P.s.metrics||'[nhập số liệu ở trên]'}
+${P.lessons.length?'BÀI HỌC TRƯỚC:\n'+P.lessons.slice(-3).join('\n---\n'):''}
 
-Chẩn đoán: vấn đề/điểm mạnh nằm ở hook, nội dung giữa, kết, hình ảnh hay chủ đề?
-Sau đó trả về ĐÚNG 1 khối bắt đầu bằng "BÀI HỌC:" gồm tối đa 5 gạch đầu dòng ngắn, cụ thể, áp dụng được cho bài tiếp theo (giữ gì, bỏ gì, thử gì).`}
+1. Chẩn đoán: điểm mạnh/yếu nằm ở hook, nội dung giữa, kết, hình ảnh hay chủ đề?
+2. So sánh điểm chấm trước khi đăng với kết quả thật: tiêu chí nào bị chấm quá cao hoặc quá thấp? Lần sau cần chấm khắt khe hơn ở tiêu chí nào?
+3. Trả về ĐÚNG 1 khối bắt đầu bằng "BÀI HỌC:" gồm tối đa 5 gạch đầu dòng ngắn, cụ thể (giữ gì, bỏ gì, thử gì, chấm điểm lại thế nào).`}}
 ];
 
 const active=()=>STEPS.filter(s=>!s.when||s.when());
@@ -228,16 +265,17 @@ const done=s=>s.setup?!!P.s.niche:!!O(s.id)&&(!s.pick||!!P.pick[s.pick]);
 
 function render(){
  const A=active();if(P.cur>=A.length)P.cur=A.length-1;const st=A[P.cur];
- $('prog').innerHTML=STEPS.map(s=>{const i=A.indexOf(s);return `<div class="${i<0?'skip':i==P.cur?'cur':done(s)?'done':''}" onclick="${i<0?'':`P.cur=${i};save();render()`}">${i<0?'–':done(s)&&i!=P.cur?'✓':i+1}</div>`}).join('');
+ $('prog').innerHTML=STEPS.map(s=>{const i=A.indexOf(s);return `<div class="${i<0?'skip':i==P.cur?'cur':done(s)?'done':''}" onclick="${i<0?'':`go(${i})`}">${i<0?'–':done(s)&&i!=P.cur?'✓':i+1}</div>`}).join('');
  $('sub').textContent=`Bước ${P.cur+1}/${A.length}: ${st.n}${P.s.niche?' · '+P.s.niche:''}`;
  $('bBack').disabled=P.cur==0;
  $('bNext').textContent=P.cur==A.length-1?'✓ Hoàn tất bài':'Tiếp →';
  st.setup?renderSetup():renderStep(st);scrollTo(0,0)}
+function go(i){const A=active();if(A[P.cur].setup)grab();else if($('res')){P.out[A[P.cur].id]=$('res').value;save()}P.cur=i;save();render()}
 
-function renderSetup(){const s=P.s,v=(k,d='')=>s[k]||d;
+function renderSetup(){const s=P.s,v=(k,d='')=>esc(s[k]||d);
  const sel=(k,a)=>`<select id="f_${k}">${a.map(o=>`<option ${o==s[k]?'selected':''}>${o}</option>`).join('')}</select>`;
  $('main').innerHTML=`<div class="card"><h2>① Thiết lập dự án</h2><span class="tag pj">Cả kênh</span>
- <p class="hint">Điền 1 lần. Mọi bước phía sau tự dùng các thông tin này.</p>
+ <p class="hint">Điền 1 lần. Mọi bước phía sau tự dùng thông tin này.</p>
  <label>Ngách / chủ đề kênh</label><input id="f_niche" value="${v('niche')}" placeholder="vd: tâm lý học cho người trẻ đi làm" list="nl">
  <datalist id="nl">${['Tâm lý – cảm xúc người trẻ','Tài chính cá nhân cho người mới đi làm','Bí ẩn – truyền thuyết dân gian','Lịch sử ít người biết','Khoa học tò mò đời sống','Tư duy & phát triển bản thân','Tình cảm – mối quan hệ','Mẹo dùng AI cho công việc','Mẹo sống – gia đình','Sức khỏe – giấc ngủ','Giải thích kỹ thuật nhà máy','Tóm tắt sách'].map(x=>`<option>${x}`).join('')}</datalist>
  <div class="g2"><div><label>Nền tảng</label>${sel('plat',['TikTok','YouTube Shorts','YouTube dài','Facebook Reels','Instagram Reels'])}</div>
@@ -249,64 +287,94 @@ function renderSetup(){const s=P.s,v=(k,d='')=>s[k]||d;
  <label>Màu chủ đạo</label><input id="f_col" value="${v('col','deep blue-purple shadows, warm golden accent light')}">
  <label>Nhân vật cố định (tùy chọn)</label><input id="f_chr" value="${v('chr')}" placeholder="để trống: AI tự đề xuất ở bước Visual Bible">
  </div>`}
-
 function grab(){if(!$('f_niche'))return;['niche','plat','lang','fmt','tone','aud','vis','col','chr'].forEach(k=>P.s[k]=$('f_'+k).value.trim());save()}
 
 function renderStep(st){
  const miss=(st.need||[]).map(id=>STEPS.find(x=>x.id==id)).filter(s=>!done(s)&&(!s.when||s.when()));
- const prompt=st.p();
  $('main').innerHTML=`<div class="card"><h2>${P.cur+1}. ${st.n}</h2>
  <span class="tag ${st.sc}">${st.sc=='pj'?'Cả kênh – làm 1 lần':'Mỗi bài'}</span>${P.lessons.length&&['ideas','hooks','script'].includes(st.id)?'<span class="tag" style="background:#1d4d2b;color:#c7f7d4">+ bài học cũ</span>':''}
  <div class="flowbox">🔗 ${st.info}</div>
- ${miss.length?`<div class="miss">⚠ Chưa có kết quả bước: ${miss.map(m=>m.n).join(', ')} — prompt sẽ thiếu dữ liệu.</div>`:''}
- ${st.metrics?`<label>Số liệu bài (views, % xem hết, like, share, save, follow, CTR…)</label><textarea id="met" style="min-height:60px" oninput="P.s.metrics=this.value;save()">${P.s.metrics||''}</textarea><button class="sec" style="margin-top:6px" onclick="render()">↻ Cập nhật prompt</button>`:''}
+ ${miss.length?`<div class="miss">⚠ Chưa có kết quả bước: ${miss.map(m=>m.n).join(', ')}, nên prompt sẽ thiếu dữ liệu.</div>`:''}
+ ${st.metrics?`<label>Số liệu bài (views, % xem hết, like, share, save, follow, CTR…)</label><textarea id="met" style="min-height:60px" oninput="P.s.metrics=this.value;save()">${esc(P.s.metrics||'')}</textarea><button class="sec" style="margin-top:6px" onclick="render()">↻ Cập nhật prompt</button>`:''}
  </div>
  <div class="card"><b style="font-size:13px">A. Copy prompt → dán vào Copilot / ChatGPT</b>
- <div class="out" id="pr">${esc(prompt)}</div>
+ <div class="out" id="pr">${esc(st.p())}</div>
  <div class="row"><button onclick="cpy()">📋 Copy prompt</button></div></div>
  <div class="card"><b style="font-size:13px">B. Dán kết quả AI trả về</b>
  <textarea id="res" placeholder="Dán toàn bộ kết quả vào đây...">${esc(P.out[st.id]||'')}</textarea>
  <div class="row"><button class="sec" onclick="paste()">📥 Dán từ clipboard</button><button class="ok" onclick="saveOut()">💾 Lưu</button></div>
- <div id="pk"></div>
- ${st.id=='review'?`<div id="ls"></div>`:''}
  ${['img','motion','voice','caption'].includes(st.id)&&O(st.id)?'<button class="sec" style="width:100%;margin-top:8px" onclick="cpOut()">📋 Copy kết quả để dùng</button>':''}
- </div>`;
+ ${st.id=='review'?'<div id="ls"></div>':''}
+ </div>
+ ${st.pick?'<div class="card" id="pk"></div>':''}`;
  $('res').oninput=()=>{P.out[st.id]=$('res').value;save()};
  if(st.pick)renderPick(st);
  if(st.id=='review')renderLessons()}
 
-const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
-function lines(t){return t.split('\n').map(l=>l.trim()).filter(l=>/^\d+[\.\)]/.test(l)).map(l=>l.replace(/^\d+[\.\)]\s*/,'').replace(/\*\*/g,''))}
-function renderPick(st){const L=lines(O(st.id));
- $('pk').innerHTML=L.length?`<label style="margin-top:12px">👆 Chạm để chọn ${st.pick=='idea'?'ý tưởng':'hook'} dùng cho bước sau</label><div class="opts">${L.map((l,i)=>`<div class="opt ${P.pick[st.pick]==l?'on':''}" onclick="choose('${st.pick}',${i})">${esc(l)}</div>`).join('')}</div>`
- :(O(st.id)?`<label style="margin-top:12px">Không nhận dạng được danh sách — nhập ${st.pick=='idea'?'ý tưởng':'hook'} đã chọn:</label><input value="${esc(P.pick[st.pick]||'')}" oninput="P.pick['${st.pick}']=this.value;save()">`:'')}
-function choose(k,i){const st=active()[P.cur];P.pick[k]=lines(O(st.id))[i];
- if(k=='idea')delete P.pick.hook;save();renderPick(st);toast('Đã chọn ✓')}
-function renderLessons(){const t=O('review'),m=t.match(/BÀI HỌC:[\s\S]*/i);
- $('ls').innerHTML=m?`<div class="lesson">${esc(m[0])}</div><p class="hint">✓ Bấm “Hoàn tất bài” để lưu bài học này. Nó sẽ tự chèn vào prompt Ý tưởng, Hook, Kịch bản của bài sau.</p>`:''}
+/* ============ AI CHẤM & TỰ CHỌN ============ */
+let LIST=[],OPEN=null;
+function parse(k,txt){const out=[];txt.split('\n').forEach(l=>{l=l.replace(/\*\*/g,'').trim();if(!/^\d+[\.\)]/.test(l))return;
+ let body=l.replace(/^\d+[\.\)]\s*/,''),sc=null;const m=body.match(/\|\s*([\d\s,\.\/]+)\s*$/);
+ if(m){const n=m[1].split(/[,\s]+/).filter(Boolean).map(x=>parseFloat(x));if(n.length>=CR[k].length){sc=n.slice(0,CR[k].length);body=body.slice(0,m.index).trim()}}
+ out.push({t:body,sc})});
+ const c=txt.match(/CHỌN\s*:?\s*(\d+)\s*[—\-:]*\s*(.*)/i);return{items:out,ch:c?+c[1]-1:null,why:c?c[2].trim():''}}
+function autoPick(k,st){const r=parse(k,O(st.id));LIST=r.items.map(x=>x.t);
+ r.items.forEach(x=>{if(x.sc)P.sc[k][x.t]=x.sc});
+ const ranked=LIST.filter(t=>score(k,t).pct!=null).sort((a,b)=>score(k,b).pct-score(k,a).pct);
+ if(!P.pick[k]||!LIST.includes(P.pick[k])){
+  const t=ranked[0]||(r.ch!=null?LIST[r.ch]:LIST[0]);
+  if(t){if(k=='idea'&&P.pick.idea!=t){delete P.pick.hook;delete P.out.hooks}P.pick[k]=t;P.auto=P.auto||{};P.auto[k]=1;
+   P.why=P.why||{};P.why[k]=(r.ch!=null&&LIST[r.ch]==t)?r.why:'Điểm tổng cao nhất theo trọng số.'}}
+ save();return{r,ranked}}
+function renderPick(st){const k=st.pick,nm=k=='idea'?'ý tưởng':'hook';
+ if(!O(st.id)){$('pk').innerHTML=`<p class="hint">Dán kết quả AI ở ô B. Công cụ sẽ tự đọc điểm và tự chọn ${nm} tốt nhất.</p>`;return}
+ const {r,ranked}=autoPick(k,st);
+ if(!LIST.length){$('pk').innerHTML='<div class="miss">Không đọc được danh sách. Hãy chạy lại prompt (AI cần trả đúng định dạng có số thứ tự).</div>';return}
+ const noScore=LIST.length-ranked.length;
+ const order=[...ranked,...LIST.filter(t=>!ranked.includes(t))];
+ const sel=P.pick[k],ss=score(k,sel);const[vt,cl]=ss.pct!=null?verdict(ss.pct):['',''];
+ let h=`<b style="font-size:14px">C. AI đã chấm & chọn</b>
+ <div class="sc pick" style="margin-top:8px"><div class="hd"><div class="tx">🏆 <b>${esc(sel)}</b></div><div class="badge ${cl}">${ss.pct??'–'}<small>${vt||'không điểm'}</small></div></div>
+ <p class="hint">💬 ${esc(P.why&&P.why[k]||'')}${P.auto&&P.auto[k]?'':' (bạn đã đổi lựa chọn)'}</p></div>
+ ${noScore?`<div class="flag">⚠ ${noScore} dòng không có điểm. Có thể AI trả sai định dạng.</div>`:''}
+ ${r.ch!=null&&LIST[r.ch]&&LIST[r.ch]!==ranked[0]&&ranked.length?`<p class="hint">Lưu ý: AI đề xuất số ${r.ch+1}, nhưng tính theo trọng số thì số khác cao hơn. Công cụ ưu tiên điểm có trọng số.</p>`:''}
+ <label style="margin-top:10px">Bảng xếp hạng (chạm để xem chi tiết hoặc đổi lựa chọn)</label>`;
+ h+=order.map((t,n)=>{const i=LIST.indexOf(t),s=score(k,t),a=P.sc[k][t]||[],op=OPEN===i;const[v2,c2]=s.pct!=null?verdict(s.pct):['',''];
+  return `<div class="sc ${t==sel?'pick':''}"><div class="hd" onclick="OPEN=${op?'null':i};renderPick(active()[P.cur])">
+  <div class="tx">${s.pct!=null?'#'+(n+1)+' ':''}${t==sel?'✅ ':''}${esc(t)}</div><div class="badge ${c2}">${s.pct??'–'}<small>${v2}</small></div></div>
+  ${s.min<=3?'<div class="flag">⚠ Có tiêu chí ≤3 điểm</div>':''}
+  ${op?`<div class="sum">${CR[k].map((c,ci)=>`${c[0]}${c[2]>=1.3?' ★':''}: <b>${a[ci]??'-'}</b>/10`).join(' · ')}</div>
+  <div class="acts"><button onclick="choose('${k}',${i})">${t==sel?'✅ Đang dùng':'Dùng '+nm+' này'}</button></div>`:''}</div>`}).join('');
+ $('pk').innerHTML=h}
+function choose(k,i){const t=LIST[i];if(k=='idea'&&P.pick.idea!=t){delete P.pick.hook;delete P.out.hooks}
+ P.pick[k]=t;P.auto[k]=0;P.why[k]='Bạn chọn thủ công.';save();OPEN=null;render();toast('Đã đổi ✓')}
+function renderLessons(){const m=O('review').match(/BÀI HỌC:[\s\S]*/i);
+ $('ls').innerHTML=m?`<div class="lesson">${esc(m[0])}</div><p class="hint">✓ Bấm “Hoàn tất bài” để lưu bài học. Nó sẽ tự chèn vào prompt Ý tưởng, Hook, Kịch bản của bài sau.</p>`:''}
 
-async function cpy(){await navigator.clipboard.writeText($('pr').textContent).catch(()=>{});toast('Đã copy prompt')}
-async function cpOut(){await navigator.clipboard.writeText($('res').value).catch(()=>{});toast('Đã copy')}
+async function cpy(){try{await navigator.clipboard.writeText($('pr').textContent);toast('Đã copy prompt')}catch{toast('Hãy bôi đen để copy')}}
+async function cpOut(){try{await navigator.clipboard.writeText($('res').value);toast('Đã copy')}catch{toast('Hãy bôi đen để copy')}}
 async function paste(){try{const t=await navigator.clipboard.readText();$('res').value=t;saveOut()}catch{toast('Hãy nhấn giữ ô để dán')}}
-function saveOut(){const st=active()[P.cur];P.out[st.id]=$('res').value;save();toast('Đã lưu');renderStep(st);render()}
+function saveOut(){const st=active()[P.cur];P.out[st.id]=$('res').value;if(st.pick){delete P.pick[st.pick]}save();render();if(st.pick&&P.pick[st.pick])toast('AI đã chọn: '+P.pick[st.pick].slice(0,40));else toast('Đã lưu')}
 
-function move(d){const A=active();if(A[P.cur].setup){grab();if(!P.s.niche&&d>0)return toast('Nhập ngách trước')}
- else if($('res')){P.out[A[P.cur].id]=$('res').value;save()}
- if(d>0&&A[P.cur].pick&&!P.pick[A[P.cur].pick]&&O(A[P.cur].id))return toast('Hãy chọn 1 dòng trước');
+function move(d){const A=active(),st=A[P.cur];
+ if(st.setup){grab();if(!P.s.niche&&d>0)return toast('Nhập ngách trước')}
+ else if($('res')){P.out[st.id]=$('res').value;save()}
+ if(d>0&&st.pick&&!P.pick[st.pick])return toast('Dán kết quả AI để công cụ tự chọn');
  if(d>0&&P.cur==A.length-1)return finish();
- P.cur=Math.max(0,Math.min(A.length-1,P.cur+d));save();render()}
-
+ OPEN=null;P.cur=Math.max(0,Math.min(A.length-1,P.cur+d));save();render()}
 function finish(){const m=O('review').match(/BÀI HỌC:[\s\S]*/i);
- P.history.push({d:new Date().toLocaleDateString('vi-VN'),idea:P.pick.idea,hook:P.pick.hook,metrics:P.s.metrics||''});
- if(m)P.lessons.push(`[${P.pick.idea||''}] ${P.s.metrics||''}\n${m[0]}`);
+ const si=score('idea',P.pick.idea||'').pct,sh=score('hook',P.pick.hook||'').pct;
+ P.history.push({d:new Date().toLocaleDateString('vi-VN'),idea:P.pick.idea,ideaScore:si,hook:P.pick.hook,hookScore:sh,metrics:P.s.metrics||''});
+ if(m)P.lessons.push(`[${P.pick.idea||''}] AI chấm ý tưởng ${si??'-'} / hook ${sh??'-'} · ${P.s.metrics||''}\n${m[0]}`);
  save();if(confirm('Đã lưu bài'+(m?' + bài học':'')+'. Bắt đầu bài mới?'))newPost()}
 function newPost(){['ideas','hooks','script','img','motion','voice','caption','review'].forEach(k=>delete P.out[k]);
- P.pick={};P.s.metrics='';P.cur=active().findIndex(s=>s.id=='ideas');save();$('menu').open&&$('menu').close();render();toast('Bài mới – giữ nghiên cứu & bài học')}
+ P.pick={};P.sc={idea:{},hook:{}};P.auto={};P.why={};P.s.metrics='';OPEN=null;
+ P.cur=active().findIndex(s=>s.id=='ideas');save();if($('menu').open)$('menu').close();render();toast('Bài mới – giữ nghiên cứu & bài học')}
 function exp(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(P,null,1)],{type:'application/json'}));a.download='pipeline-'+(P.s.niche||'du-an').slice(0,20)+'.json';a.click()}
-function imp(el){const r=new FileReader();r.onload=e=>{P=JSON.parse(e.target.result);save();location.reload()};r.readAsText(el.files[0])}
-$('menu').addEventListener('toggle',()=>{});
-$('menu').onclick=e=>{};
-document.querySelector('header button').addEventListener('click',()=>{$('stat').textContent=`Đã hoàn tất ${P.history.length} bài · ${P.lessons.length} bài học được tích lũy · ${(JSON.stringify(P).length/1024).toFixed(0)} KB`});
+function imp(el){const r=new FileReader();r.onload=e=>{try{P=JSON.parse(e.target.result);save();location.reload()}catch{alert('File không hợp lệ')}};r.readAsText(el.files[0])}
+$('mbtn').onclick=()=>{const h=P.history;const avg=a=>{a=a.filter(x=>x!=null);return a.length?Math.round(a.reduce((s,x)=>s+x,0)/a.length):'-'};
+ $('stat').innerHTML=`Đã hoàn tất <b>${h.length}</b> bài · <b>${P.lessons.length}</b> bài học<br>Điểm AI chấm TB: ý tưởng ${avg(h.map(x=>x.ideaScore))} · hook ${avg(h.map(x=>x.hookScore))}<br>${h.slice(-5).reverse().map(x=>`• ${x.d} – ${esc((x.idea||'').slice(0,40))} (${x.ideaScore??'-'}/${x.hookScore??'-'}) ${esc((x.metrics||'').slice(0,30))}`).join('<br>')}`;
+ $('menu').showModal()};
 render();
 </script>
 </body>
